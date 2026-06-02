@@ -1,0 +1,307 @@
+{
+  "patient_demographics": {
+    "value": "Patient Name: Jordan Blake; DOB: 04/12/1968; MRN: SYN-0001",
+    "status": "sourced",
+    "sources": [
+      {
+        "file": "sample_patient_text.pdf",
+        "page": 1,
+        "quote": "Patient Name: Jordan Blake"
+      }
+    ],
+    "notes": null
+  },
+  "admission_date": {
+    "value": "05/25/2026",
+    "status": "sourced",
+    "sources": [
+      {
+        "file": "sample_patient_text.pdf",
+        "page": 1,
+        "quote": "05/25/2026"
+      }
+    ],
+    "notes": null
+  },
+  "discharge_date": {
+    "value": "05/29/2026",
+    "status": "sourced",
+    "sources": [
+      {
+        "file": "sample_patient_text.pdf",
+        "page": 1,
+        "quote": "05/29/2026"
+      }
+    ],
+    "notes": null
+  },
+  "principal_diagnosis": {
+    "value": "Acute decompensated heart failure.",
+    "status": "sourced",
+    "sources": [
+      {
+        "file": "sample_patient_text.pdf",
+        "page": 1,
+        "quote": "Acute decompensated heart failure."
+      }
+    ],
+    "notes": null
+  },
+  "secondary_diagnoses": [
+    {
+      "value": "Hypertension",
+      "status": "sourced",
+      "sources": [
+        {
+          "file": "sample_patient_text.pdf",
+          "page": 1,
+          "quote": "Hypertension; type 2 diabetes mellitus."
+        }
+      ],
+      "notes": null
+    },
+    {
+      "value": "type 2 diabetes mellitus",
+      "status": "sourced",
+      "sources": [
+        {
+          "file": "sample_patient_text.pdf",
+          "page": 1,
+          "quote": "Hypertension; type 2 diabetes mellitus."
+        }
+      ],
+      "notes": null
+    }
+  ],
+  "hospital_course": {
+    "value": "Patient admitted with dyspnea and lower extremity edema. Treated with IV furosemide with clinical improvement. Creatinine remained stable. No procedures were performed.",
+    "status": "sourced",
+    "sources": [
+      {
+        "file": "sample_patient_text.pdf",
+        "page": 1,
+        "quote": "Patient admitted with dyspnea and lower extremity edema. Treated with IV furosem"
+      }
+    ],
+    "notes": null
+  },
+  "procedures": [
+    {
+      "value": "No procedures were performed.",
+      "status": "sourced",
+      "sources": [
+        {
+          "file": "sample_patient_text.pdf",
+          "page": 1,
+          "quote": "No procedures were performed."
+        }
+      ],
+      "notes": null
+    }
+  ],
+  "admission_medications": [
+    {
+      "name": "Lisinopril 10 mg PO daily",
+      "dose": null,
+      "route": null,
+      "frequency": null,
+      "status": "admission",
+      "reason": null,
+      "sources": [
+        {
+          "file": "sample_patient_text.pdf",
+          "page": 1,
+          "quote": "Lisinopril 10 mg PO daily"
+        }
+      ]
+    },
+    {
+      "name": "Metformin 500 mg PO BID",
+      "dose": null,
+      "route": null,
+      "frequency": null,
+      "status": "admission",
+      "reason": null,
+      "sources": [
+        {
+          "file": "sample_patient_text.pdf",
+          "page": 1,
+          "quote": "Metformin 500 mg PO BID"
+        }
+      ]
+    },
+    {
+      "name": "Aspirin 81 mg PO daily",
+      "dose": null,
+      "route": null,
+      "frequency": null,
+      "status": "admission",
+      "reason": null,
+      "sources": [
+        {
+          "file": "sample_patient_text.pdf",
+          "page": 1,
+          "quote": "Aspirin 81 mg PO daily"
+        }
+      ]
+    }
+  ],
+  "discharge_medications": [
+    {
+      "name": "Lisinopril 20 mg PO daily",
+      "dose": null,
+      "route": null,
+      "frequency": null,
+      "status": "discharge",
+      "reason": null,
+      "sources": [
+        {
+          "file": "sample_patient_text.pdf",
+          "page": 1,
+          "quote": "Lisinopril 20 mg PO daily"
+        }
+      ]
+    },
+    {
+      "name": "Furosemide 40 mg PO daily",
+      "dose": null,
+      "route": null,
+      "frequency": null,
+      "status": "discharge",
+      "reason": null,
+      "sources": [
+        {
+          "file": "sample_patient_text.pdf",
+          "page": 1,
+          "quote": "Furosemide 40 mg PO daily"
+        }
+      ]
+    },
+    {
+      "name": "Metformin 500 mg PO BID",
+      "dose": null,
+      "route": null,
+      "frequency": null,
+      "status": "discharge",
+      "reason": null,
+      "sources": [
+        {
+          "file": "sample_patient_text.pdf",
+          "page": 1,
+          "quote": "Metformin 500 mg PO BID"
+        }
+      ]
+    }
+  ],
+  "medication_changes": [
+    {
+      "medication": "Furosemide 40 mg PO daily",
+      "change_type": "added",
+      "details": "Present on discharge list but not admission list.",
+      "reason": null,
+      "needs_reconciliation": true,
+      "sources": [
+        {
+          "file": "sample_patient_text.pdf",
+          "page": 1,
+          "quote": "Furosemide 40 mg PO daily"
+        }
+      ]
+    },
+    {
+      "medication": "Aspirin 81 mg PO daily",
+      "change_type": "stopped",
+      "details": "Present on admission list but not discharge list.",
+      "reason": null,
+      "needs_reconciliation": true,
+      "sources": [
+        {
+          "file": "sample_patient_text.pdf",
+          "page": 1,
+          "quote": "Aspirin 81 mg PO daily"
+        }
+      ]
+    }
+  ],
+  "allergies": [
+    {
+      "value": "Penicillin - rash",
+      "status": "sourced",
+      "sources": [
+        {
+          "file": "sample_patient_text.pdf",
+          "page": 1,
+          "quote": "Penicillin - rash."
+        }
+      ],
+      "notes": null
+    }
+  ],
+  "follow_up_instructions": [
+    {
+      "value": "Cardiology follow-up in 1 week. Primary care follow-up in 2 weeks",
+      "status": "sourced",
+      "sources": [
+        {
+          "file": "sample_patient_text.pdf",
+          "page": 1,
+          "quote": "Cardiology follow-up in 1 week. Primary care follow-up in 2 weeks."
+        }
+      ],
+      "notes": null
+    }
+  ],
+  "pending_results": [
+    {
+      "value": "Repeat BMP ordered for outpatient follow-up",
+      "status": "sourced",
+      "sources": [
+        {
+          "file": "sample_patient_text.pdf",
+          "page": 1,
+          "quote": "Repeat BMP ordered for outpatient follow-up; result pending."
+        }
+      ],
+      "notes": null
+    },
+    {
+      "value": "result pending",
+      "status": "sourced",
+      "sources": [
+        {
+          "file": "sample_patient_text.pdf",
+          "page": 1,
+          "quote": "Repeat BMP ordered for outpatient follow-up; result pending."
+        }
+      ],
+      "notes": null
+    }
+  ],
+  "discharge_condition": {
+    "value": "Stable, improved, discharged home.",
+    "status": "sourced",
+    "sources": [
+      {
+        "file": "sample_patient_text.pdf",
+        "page": 1,
+        "quote": "Stable, improved, discharged home."
+      }
+    ],
+    "notes": null
+  },
+  "conflicts": [],
+  "safety_flags": [
+    {
+      "category": "medication_reconciliation",
+      "severity": "clinician_review",
+      "message": "Furosemide 40 mg PO daily: added without documented reason.",
+      "sources": []
+    },
+    {
+      "category": "medication_reconciliation",
+      "severity": "clinician_review",
+      "message": "Aspirin 81 mg PO daily: stopped without documented reason.",
+      "sources": []
+    }
+  ]
+}

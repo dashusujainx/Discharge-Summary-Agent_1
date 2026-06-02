@@ -1,0 +1,32 @@
+Patient Name: Jordan Blake
+DOB: 04/12/1968
+MRN: SYN-0001
+Admission Date: 05/25/2026
+Discharge Date: 05/29/2026
+
+Principal Diagnosis: Acute decompensated heart failure.
+Secondary Diagnoses: Hypertension; type 2 diabetes mellitus.
+
+Allergies: Penicillin - rash.
+
+Admission Medications:
+- Lisinopril 10 mg PO daily
+- Metformin 500 mg PO BID
+- Aspirin 81 mg PO daily
+
+Hospital Course:
+Patient admitted with dyspnea and lower extremity edema. Treated with IV furosemide with clinical improvement. Creatinine remained stable. No procedures were performed.
+
+Discharge Medications:
+- Lisinopril 20 mg PO daily
+- Furosemide 40 mg PO daily
+- Metformin 500 mg PO BID
+
+Follow-up Instructions:
+Cardiology follow-up in 1 week. Primary care follow-up in 2 weeks.
+
+Pending Results:
+Repeat BMP ordered for outpatient follow-up; result pending.
+
+Discharge Condition:
+Stable, improved, discharged home.

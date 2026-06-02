@@ -1,0 +1,91 @@
+{
+  "patient_demographics": {
+    "value": "MISSING",
+    "status": "missing",
+    "sources": [],
+    "notes": null
+  },
+  "admission_date": {
+    "value": "MISSING",
+    "status": "missing",
+    "sources": [],
+    "notes": null
+  },
+  "discharge_date": {
+    "value": "MISSING",
+    "status": "missing",
+    "sources": [],
+    "notes": null
+  },
+  "principal_diagnosis": {
+    "value": "MISSING",
+    "status": "missing",
+    "sources": [],
+    "notes": null
+  },
+  "secondary_diagnoses": [],
+  "hospital_course": {
+    "value": "MISSING",
+    "status": "missing",
+    "sources": [],
+    "notes": null
+  },
+  "procedures": [],
+  "admission_medications": [],
+  "discharge_medications": [],
+  "medication_changes": [],
+  "allergies": [],
+  "follow_up_instructions": [],
+  "pending_results": [],
+  "discharge_condition": {
+    "value": "MISSING",
+    "status": "missing",
+    "sources": [],
+    "notes": null
+  },
+  "conflicts": [],
+  "safety_flags": [
+    {
+      "category": "pdf_ingestion",
+      "severity": "clinician_review",
+      "message": "No readable text could be extracted. The draft must remain mostly missing until OCR/text extraction succeeds.",
+      "sources": []
+    },
+    {
+      "category": "missing_required",
+      "severity": "clinician_review",
+      "message": "patient demographics is missing and must be completed by clinician review.",
+      "sources": []
+    },
+    {
+      "category": "missing_required",
+      "severity": "clinician_review",
+      "message": "admission date is missing and must be completed by clinician review.",
+      "sources": []
+    },
+    {
+      "category": "missing_required",
+      "severity": "clinician_review",
+      "message": "discharge date is missing and must be completed by clinician review.",
+      "sources": []
+    },
+    {
+      "category": "missing_required",
+      "severity": "clinician_review",
+      "message": "principal diagnosis is missing and must be completed by clinician review.",
+      "sources": []
+    },
+    {
+      "category": "missing_required",
+      "severity": "clinician_review",
+      "message": "hospital course is missing and must be completed by clinician review.",
+      "sources": []
+    },
+    {
+      "category": "missing_required",
+      "severity": "clinician_review",
+      "message": "discharge condition is missing and must be completed by clinician review.",
+      "sources": []
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+iteration,patient_id,strategy,edit_distance
+1,smoke_final,baseline,0.3394777265745008
+2,smoke_final,explicit_missing,0.0854408749145591
+3,smoke_final,safety_first,0.0
+4,smoke_final,safety_first,0.0
+5,smoke_final,safety_first,0.0
+6,smoke_final,safety_first,0.0
+7,smoke_final,safety_first,0.0
+8,smoke_final,safety_first,0.0
+9,smoke_final,safety_first,0.0
+10,smoke_final,safety_first,0.0
+11,smoke_final,safety_first,0.0
+12,smoke_final,safety_first,0.0

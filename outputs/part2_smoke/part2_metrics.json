@@ -1,0 +1,12 @@
+{
+  "reward": "1 - normalized edit distance",
+  "baseline_average_edit_distance": 0.33895705521472397,
+  "best_strategy": "safety_first",
+  "best_average_edit_distance": 0.0,
+  "relative_improvement": 1.0,
+  "strategy_averages": {
+    "baseline": 0.33895705521472397,
+    "explicit_missing": 0.08532423208191131,
+    "safety_first": 0.0
+  }
+}
