@@ -1,8 +1,8 @@
 from __future__ import annotations
 import hashlib
-import json
 import logging
 import os
+import time
 from pathlib import Path
 from typing import Optional
 
@@ -15,53 +15,51 @@ def _cache_key(file_path: Path, page_num: int, dpi: int, model: str) -> str:
     return hashlib.sha256(raw.encode()).hexdigest()[:32]
 
 
-def _ocr_page_groq(
-    image_bytes: bytes,
-    vision_model: str,
-    groq_client,
-) -> str:
-    """Send page image to Groq vision model for OCR."""
+def _ocr_page_groq(image_bytes: bytes, vision_model: str, groq_client) -> str:
     import base64
     b64 = base64.b64encode(image_bytes).decode()
     response = groq_client.chat.completions.create(
         model=vision_model,
-        messages=[
-            {
-                "role": "user",
-                "content": [
-                    {
-                        "type": "image_url",
-                        "image_url": {"url": f"data:image/png;base64,{b64}"},
-                    },
-                    {
-                        "type": "text",
-                        "text": (
-                            "You are a medical document OCR system. "
-                            "Transcribe ALL text from this medical document image exactly as it appears. "
-                            "Preserve structure, labels, values, and any handwritten text. "
-                            "Do not summarize or interpret — only transcribe."
-                        ),
-                    },
-                ],
-            }
-        ],
+        messages=[{
+            "role": "user",
+            "content": [
+                {"type": "image_url", "image_url": {"url": f"data:image/png;base64,{b64}"}},
+                {"type": "text", "text": (
+                    "You are a medical document OCR system. "
+                    "Transcribe ALL text from this medical document image exactly as it appears. "
+                    "Preserve structure, labels, values, and any handwritten text. "
+                    "Do not summarize or interpret — only transcribe."
+                )},
+            ],
+        }],
         max_tokens=2000,
         temperature=0,
     )
     return response.choices[0].message.content or ""
 
 
-def _ocr_page_local(image_bytes: bytes) -> str:
-    """Use local Tesseract for OCR."""
-    try:
-        import pytesseract
-        from PIL import Image
-        import io
-        img = Image.open(io.BytesIO(image_bytes))
-        return pytesseract.image_to_string(img)
-    except Exception as exc:
-        logger.warning(f"Local OCR failed: {exc}")
-        return ""
+def _ocr_page_groq_with_retry(
+    image_bytes: bytes,
+    vision_model: str,
+    groq_client,
+    max_retries: int = 5,
+) -> str:
+    """Call Groq OCR with exponential backoff on rate limit errors."""
+    import groq as groq_module
+    delay = 3
+    for attempt in range(max_retries):
+        try:
+            return _ocr_page_groq(image_bytes, vision_model, groq_client)
+        except groq_module.RateLimitError:
+            if attempt < max_retries - 1:
+                print(f"    [Rate limit] waiting {delay}s before retry {attempt+2}/{max_retries}...")
+                time.sleep(delay)
+                delay *= 2  # exponential backoff
+            else:
+                raise
+        except Exception:
+            raise
+    return ""
 
 
 def extract_pdf_pages(
@@ -72,17 +70,13 @@ def extract_pdf_pages(
     ocr_dpi: int = 150,
     max_ocr_pages: Optional[int] = None,
     cache_dir: Optional[Path] = None,
+    ocr_delay: float = 2.0,   # seconds between OCR calls to avoid rate limits
 ) -> list[dict]:
-    """
-    Extract text from every page of a PDF.
-    Returns list of dicts matching ExtractionPage schema.
-    """
-    import fitz  # PyMuPDF
+    import fitz
 
     pages = []
     groq_client = None
 
-    # Initialise Groq client if needed
     if enable_ocr and ocr_provider in ("groq", "auto"):
         api_key = os.getenv("GROQ_API_KEY")
         if api_key:
@@ -92,34 +86,33 @@ def extract_pdf_pages(
             except Exception as exc:
                 logger.warning(f"Could not init Groq client: {exc}")
         else:
-            logger.warning("GROQ_API_KEY not set — falling back to local OCR")
+            logger.warning("GROQ_API_KEY not set")
 
     try:
         doc = fitz.open(str(pdf_path))
     except Exception as exc:
         logger.error(f"Cannot open PDF {pdf_path}: {exc}")
-        return [{"file": pdf_path.name, "page": 0, "text": "", "method": "error", "status": "error", "error": str(exc)}]
+        return [{"file": pdf_path.name, "page": 0, "text": "",
+                 "method": "error", "status": "error", "error": str(exc)}]
 
     ocr_count = 0
-    for page_num in range(len(doc)):
+    total_pages = len(doc)
+
+    for page_num in range(total_pages):
         page = doc[page_num]
         text = page.get_text("text").strip()
         method = "embedded_text"
 
         if not text and enable_ocr:
-            # OCR this page
             if max_ocr_pages is not None and ocr_count >= max_ocr_pages:
                 pages.append({
-                    "file": pdf_path.name,
-                    "page": page_num + 1,
-                    "text": "",
-                    "method": "skipped_ocr_limit",
-                    "status": "empty",
-                    "error": f"OCR page limit ({max_ocr_pages}) reached",
+                    "file": pdf_path.name, "page": page_num + 1,
+                    "text": "", "method": "skipped_ocr_limit",
+                    "status": "empty", "error": f"OCR limit ({max_ocr_pages}) reached",
                 })
                 continue
 
-            # Check cache
+            # Check cache first
             cache_file = None
             if cache_dir:
                 cache_dir.mkdir(parents=True, exist_ok=True)
@@ -128,9 +121,9 @@ def extract_pdf_pages(
                 if cache_file.exists():
                     text = cache_file.read_text(encoding="utf-8")
                     method = "ocr_cached"
-                    logger.info(f"OCR cache hit: {pdf_path.name} p{page_num+1}")
+                    print(f"    [Cache] p{page_num+1}/{total_pages} ✓")
 
-            if not text or method == "embedded_text":
+            if not text:
                 # Render page to image
                 try:
                     mat = fitz.Matrix(ocr_dpi / 72, ocr_dpi / 72)
@@ -138,44 +131,39 @@ def extract_pdf_pages(
                     img_bytes = pix.tobytes("png")
                 except Exception as exc:
                     pages.append({
-                        "file": pdf_path.name,
-                        "page": page_num + 1,
-                        "text": "",
-                        "method": "ocr_render_error",
-                        "status": "error",
-                        "error": str(exc),
+                        "file": pdf_path.name, "page": page_num + 1,
+                        "text": "", "method": "render_error",
+                        "status": "error", "error": str(exc),
                     })
                     continue
 
-                # Try OCR
-                ocr_text = ""
-                if ocr_provider == "groq" or (ocr_provider == "auto" and groq_client):
-                    try:
-                        ocr_text = _ocr_page_groq(img_bytes, vision_model, groq_client)
-                        method = "ocr_groq"
-                    except Exception as exc:
-                        logger.warning(f"Groq OCR failed p{page_num+1}: {exc} — trying local")
-                        ocr_text = _ocr_page_local(img_bytes)
-                        method = "ocr_local_fallback"
-                elif ocr_provider == "local" or (ocr_provider == "auto" and not groq_client):
-                    ocr_text = _ocr_page_local(img_bytes)
-                    method = "ocr_local"
+                print(f"    [OCR] p{page_num+1}/{total_pages} ...", end=" ", flush=True)
 
-                text = ocr_text.strip()
+                if groq_client and ocr_provider in ("groq", "auto"):
+                    try:
+                        # Polite delay between calls
+                        if ocr_count > 0:
+                            time.sleep(ocr_delay)
+                        text = _ocr_page_groq_with_retry(img_bytes, vision_model, groq_client)
+                        method = "ocr_groq"
+                        print("✓")
+                    except Exception as exc:
+                        print(f"✗ ({exc})")
+                        logger.warning(f"Groq OCR failed p{page_num+1}: {exc}")
+                        text = ""
+                        method = "ocr_failed"
+
                 ocr_count += 1
 
                 # Save to cache
                 if cache_file and text:
                     cache_file.write_text(text, encoding="utf-8")
 
-        status = "ok" if text else "empty"
+        status = "ok" if text.strip() else "empty"
         pages.append({
-            "file": pdf_path.name,
-            "page": page_num + 1,
-            "text": text,
-            "method": method,
-            "status": status,
-            "error": None,
+            "file": pdf_path.name, "page": page_num + 1,
+            "text": text, "method": method,
+            "status": status, "error": None,
         })
 
     doc.close()

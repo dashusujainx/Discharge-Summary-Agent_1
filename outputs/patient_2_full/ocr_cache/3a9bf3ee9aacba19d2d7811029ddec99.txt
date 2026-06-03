@@ -1,0 +1,54 @@
+## ICU-CHART
+
+### Top Section
+- **Date:** 06/01/2024
+- **Weight (kg):** 
+- **Blood Group:** 
+- **Allergies:** NKA (No Known Allergies)
+- **HbA1c:** 
+
+### Medication Chart
+| Drug | Dose | Route | Frequency | Start Date | Stop Date |
+| --- | --- | --- | --- | --- | --- |
+| TNT | AMPI-PENIK |  |  |  |  |
+| INJ | PIVANOX |  | IV |  |  |
+| INJ | EMUSET |  |  |  |  |
+| INJ | SUMOL | 1g | IV |  |  |
+| INJ | HIDRYMOL ACID PLUS |  |  |  |  |
+| INJ | LANTUS | 100 | SC |  |  |
+| INJ | H. ATROPINE |  |  |  |  |
+| T | DOLO |  |  |  |  |
+
+### Graphs and Charts
+- **Graphs for vital signs (BP, Pulse, O2 Sat, etc.)** are present but cannot be transcribed as they are graphical.
+
+### Care Plan
+- **ICU Care Plan:**
+  - Strict I/0
+  - Falls precautions
+  - C (?)
+  - Sp monitoring
+  - Maintain good oxygenation
+  - Other meds on Rx chart
+  - Tubes secure
+  - I & 0, fluid balance
+
+### Fluid Balance
+- **FAST H U G S A B I D**
+
+### Additional Notes
+- **FOLLOW UP WITH DR. ANAND.**
+- **Patient Bridging Note:** 
+  - Readily available
+
+### Bottom Section
+- **Total Intake:** 
+- **Total Output:** 
+
+### Handwritten Notes
+- **Readily available** under Patient Bridging Note.
+
+### Other
+- **ICU-CHART** at the top left corner.
+
+This transcription aims to capture the content as accurately as possible, preserving the structure and any handwritten text. However, due to the limitations in accurately capturing graphical data (like the vital sign graphs) and some potentially illegible handwritten notes, some sections might not be fully detailed.

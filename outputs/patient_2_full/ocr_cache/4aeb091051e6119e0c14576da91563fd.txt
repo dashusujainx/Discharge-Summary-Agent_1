@@ -1,0 +1,26 @@
+**MONITORING CHART**
+
+| TIME | Tmpr °F | HR per min | RR b/min | SPO2 % | BP mm/Hg | GRBS mg/dl | O2 min/ltr | Staff Name & ID |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|                   TIME                   |                   Tmpr                   |                   HR                   |                   RR                   |                   SPO2                   |                   BP                   |                   GRBS                   |                   O2                   |                   Staff Name                   & ID                   |
+| 4pm             | 102.2F 135blm | 30bpm             | 87%             | 130/70mmly     | Freeen   air   |                                |  |
+| 7pm             | 98.6P 120blm |  216l m          | 86%             | 130/80mmly     | Room  air   |                                |  |
+| 9pm             | 98.6F 110blm | 20blm             | 90%             | 120/70mmly     | Ree       |                                |  |
+| 11pm            | 102.2P 120blm | M lbm             | 89%.             | 130/80mmly     | Ree       |                                |  |
+|                 |                 |               |                 |                 |                     | 113/126                        |                                   |  |
+| 12AM            | 98.6F 110blm | 20blm             | 89%             | 120/80mmly     | Rei       |                                     |                                |
+| 2AM             | 98.4P 112 blm | H6l m            | 90%             | 110/70mmly     | Room      air |                                |  |
+| 7AM             | 98.6F 110blm | 20blm             | 88%             | 120/80mmly     | Rei       |                                     |                                |
+| 9AM             | 99.2F l60ly | 22blm             | 93%             | 110/ 70ly      | Room      air |                                |  |
+| 12M             | 98.4F 98.ly | pulM             | 95%             | 100/60ly       | Room      air |                                |  |
+| 2PM             | 97.2P l00blm | l0blm             | 96%             | 110/ 70ly      | Room      air |                                |  |
+| 4PM             | 98.2F 100blm | 20blm             | 97%             | 120/80mmly     | Room      air |                                |  |
+| 6:43PM          | 99.1F 110blm | 22blm             | 98%             | 130/60mmly     | Room      air |                                |  |
+| 9PM             | 98.4P 110blm | 16blm             | 96%             | 130/80mmly     | Room      air |                                |  |
+|                 |                 |               |                 |                 |                     | 213/126                        |                                   | 
+| 12PM            | 98.6P 111blm | W blm             | 90%             | 120/80mmly     | Room      air |                                |  |
+| 2AM             | 10GP 100blm | 6blm             | 93%             | 110/20mmly     | Room      air |                                |  |
+| 7 AM            | 98.6P 110 blm | 20 blm            | 94%             | 120/80mmly     | Room      air |                                |  |
+| 10 Am           | 97.6F 100blm | 20blm             | 94%             | 110/80my       | Room      air |                                |  |
+| 12PM            | 98.2F (10blm | 20blm             | 96%             | [20/60mmy     | Room      air |                                |  |
+| 2PM             | 97.2P 100blm | 20blm             | 97%             | 110/70my       | Room      air |                                |  |

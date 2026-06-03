@@ -1,0 +1,31 @@
+# NURSES NOTES
+
+| Known Drug Allergies | 
+| --- | 
+| Date & Time | Observation / Nsg Action / Response / Plan | Staff Name & ID | 
+| --- | --- | --- |
+|  | not known |  |
+| 5AM | padient Sidy bed meekins done. |  | 
+|  | padient av medication giun as per drug chard |  | 
+| 7AM | padient GirBe checked & recarded to chPBs. |  | 
+| 8AM | padients Chearg hand giun to morning Jude. |  | 
+| 8AM | Pasent hand over taken from Night day Staff |  | 
+|  | - Parent Is longous & oriented |  | 
+|  | - Patient valau as checked |  | 
+|  | seconded |  | 
+| 9AM | Parent spk grounds re done |  | 
+| 10AM | Patient orel medication Adexo as per drug char |  | 
+| 11:30AM | Parent seen by Dr for advise |  | 
+|  | on reguest of parnto opmpu |  | 
+|  | → Parent reeen by M. |  | 
+| 12PM | ... advise a-say |  | 
+|  | offer leevie infom Repor4 |  | 
+
+NB: All injections to be initiated by persons administering and witnessing
+
+* Date Of Admission 
+** Known Drug Allergies 
+
+[ a series of circles with numbers underneath ] 
+0 | 2 | 4 | 6 | 8 | 10  
+HURT | HURTS LITTLE BIT | HURTS LITTLE MORE | HURTS EVEN MORE | HURTS A WHOLE LOT | HURTS WORST

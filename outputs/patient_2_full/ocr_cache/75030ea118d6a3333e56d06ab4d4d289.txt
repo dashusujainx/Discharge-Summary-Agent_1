@@ -1,0 +1,62 @@
+**NURSING ASSESSMENT ON ADMISSION**
+
+
+**Date & Time of Nursing Initial Assessment:** 06-2-16   6:00pm  
+**General Consent Signed: Yes / No**
+
+
+| **Vital Signs** | **Temp** 98°F | **Pulse:** 116 b /Min | **Resp:** 22 b /Min | **BP:** 87/50 | 
+| --- | --- | --- | --- | --- |
+|  | **Height** | **Weight** 46kg | **Blood Group** | **SPO2 (if required)** 98 | **GRBS (if required)** 443 |
+| **Complaints during admission and its duration** |  | **Fever, convulsion & vomiting since 3 days** |  |  |
+
+
+| **Neurological** |  |  |  | 
+| --- | --- | --- | --- |
+|  | **Oriented: Yes / No** | **Speech: Clear / Slurred** | **Speech: Clear / Slurred** | 
+|  | **Level of Consciousness Conscious / Semiconscious/ Unconscious** | **Visual Impalment: None / Wears Spectacles / Blind-L R** | **Extremity Strength: Equal / Unequal** | 
+|  | **Pupils : Equal / Unequal / Reactive / Sluggish** | **Hearing Impairment: None / Uses Aids / Deaf - L - R** | **Pain: Yes / No** | 
+|  |  |  | **Location: Body** |
+
+
+**Pain Scale**
+|  | 0 No Pain | 2 Little Pain | 4 Mild Pain | 6 Moderate Pain | 8 Severe Pain | 10 Worst Pain | 
+| --- | --- | --- | --- | --- | --- | --- |
+
+
+| **Airway / Breathing** |  |  | 
+| --- | --- | --- |
+|  | **Airway : Clear / Obstructed** | **Dyspnea : Present / Absent** | **Wheezing : Yes / No** | 
+|  |  | √ | √ | 
+|  | **Edema: Present / Absent** | **Cough : Yes / No** | **Sputum : Yes / No** | 
+|  | √ | √ | √ | 
+|  | **Location of Edema** | **Capillary refill: < 3 Secs / > 3 Secs** |  | 
+|  |  | √ |  | 
+
+
+| **Circulation** | **Skin & Mucous Membrane** | 
+| --- | --- |
+|  | **Colour: Fresh / Pale / Flushed / Cyanotic/ Jaundiced** | **Turgor: Good / Fair / Poor** | 
+|  | **Temp: Cool / Warm /Hot** | **Mucous membrane: Intact / Impaired** | 
+|  | **Moisture: Dry / Clammy** | **Condition: Pink / Pale / Moist / Dry** | 
+
+
+| **Gastrointestinal** |  | 
+| --- | --- |
+|  | **Loss of Appetite: Yes / No** | **Nausea / Vomiting / Diarrhoea Constipation** | 
+|  | √ |  | 
+|  | **Abdomen: Soft / Firm / Tender / Distention / Expelling Flatus** | **Swallowing difficulty: Yes / No** | 
+|  |  | √ | 
+
+
+| **Genitourinary** | 
+| --- |
+|  | **Dysuria:Yes / No** | **Frequency:** | **Hematuria: Yes / No** | 
+|  | √ |  | √ | 
+|  | **Incontinence: Yes / No** |  | 
+|  | √ |  | 
+
+
+| **Any Drug Allergy** | 
+| --- |
+|  | √ not known |

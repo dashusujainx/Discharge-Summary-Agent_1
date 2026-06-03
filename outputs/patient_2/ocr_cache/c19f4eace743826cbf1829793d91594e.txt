@@ -1,0 +1,51 @@
+**ER OBSERVATION CHART(1)**  
+MRN:_________  Triage Category   Red     Yellow     Green  
+ER     |     OP     |     MLC No-  
+Diagnosis: **DKA**  
+Time of arrival     ER Doctor: Time of response     Time of response  
+**6:14PM**               |               | **6:14PM**  
+
+### **VITAL PARAMETERS**  
+
+| Time         | Time          |  
+|--------------|---------------|  
+| **6:14PM**   | **6:14PM**    |  
+
+| Pulse        | Sao2          Oxygen |  
+|--------------|----------------------|  
+| **116 b/m**  |                      |  
+
+| BP           | RR            |  
+| **87/50**    | **22 b/m**    |  
+
+| Temp         | Urine output (ml/hr) |  
+| **98°F**     |                      |  
+
+| SaO2 on air  | Blood Glucose |  
+| **96**       | **443 mg/dl** |  
+
+| GCS          | Pain score    |  
+| **15/15**    | **4/10**      |  
+
+### **Procedures**  
+**IV Cannulation done in left hand 20g**  
+
+### **Pain scale**  
+0 - No hurt  
+1 - Hurts little bit  
+2 - Hurts little more  
+3 - Hurts more  
+4 - Hurts even more  
+5 - Hurts whole lot  
+6 - Hurts worst  
+
+**Note: If score is > 2 please speak to consultant**
+
+### **Investigations:**  
+(Lab, Radiology, Pathology, others)  
+|   | Time (patient/sample) sent | Time (patient/report) received | Referred To: Specialty |  
+|----------------------------------|--------------------------------|-------------------------------|-------------------------|  
+| **CBC, creat, SE ABH, urine Etn** | **Sent to lab** | **Report Received** | **le** |  
+
+### **other orders:**  
+Dr. Consultant

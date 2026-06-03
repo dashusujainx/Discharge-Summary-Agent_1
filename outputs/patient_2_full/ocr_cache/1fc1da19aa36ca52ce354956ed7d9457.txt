@@ -1,0 +1,28 @@
+**ER OBSERVATION CHART(2)**
+
+| IV Infusion | Doctor Sign | Amt | Rate | Verified by | Administered by | Start Time | End Time |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+| Inf NS  | 2 Bolus     |     |      |              |               | 6:14PM     | 9:00pm   |
+|          |            |     |      |              |               |            |          |
+|          |            |     |      |              |               |            |          |
+|          |            |     |      |              |               |            |          |
+|          |            |     |      |              |               |            |          |
+|          |            |     |      |              |               |            |          |
+|          |            |     |      |              |               |            |          |
+
+**Medication Administration**
+
+| Name of drug/ strength | Dosage & Route | Sign of Doctor | Time | Verified by | Administered by | Time |
+| --- | --- | --- | --- | --- | --- | --- |
+| INJ PAN                | 40mg IV        |               | 6:14PM | A           |                | 6:14PM |
+| INJ EMESET            | 1mg IV         |               | 6:14PM |             |                | 6:14PM |
+|                       |               |               |       |             |                |       |
+|                       |               |               |       |             |                |       |
+|                       |               |               |       |             |                |       |
+|                       |               |               |       |             |                |       |
+|                       |               |               |       |             |                |       |
+|                       |               |               |       |             |                |       |
+
+* Patient advised admission to ward/ICU **2DIW**
+* Patient advised discharge / referred to outside hospital 
+* Refusal of Treatment

@@ -1,0 +1,50 @@
+The image contains the following text:
+
+**Top-left corner:**
+Jamp Jy 
+
+**Top ultrasound image:**
+SPECIALITY HOSPITAL
+Karamdhenyy
+296225-122950PB
+GE
+
+**Top-right corner:**
+MB 1.2 
+50c
+PENET
+
+**Middle ultrasound image:**
+SUPER SPECIALITY HOSPITAL
+Karamdhenyy
+296225-122950PB
+GE
+
+**Middle-right section:**
+EDV 
+ESV 
+TAPS
+
+**Bottom ultrasound image:**
+SUPER SPECIALITY HOSPITAL
+Karamdhenyy
+296225-122950PB
+GE
+
+**Bottom-right section:**
+ Cardiolog 
+logist 
+
+**Other text (partially visible):**
+MB 1.2 
+50c
+PENET 
+(T 
+MO 
+Hg 
+
+**Handwritten text:**
+(undecipherable signature)
+
+**Ultrasound image labels and values:**
+ Various labels and values are present on the ultrasound images, including measurements in centimeters (e.g., 1.03 cm, 1.45 cm, 3.84 cm) and percentages (e.g., 63.66%, 24.32%, 61.80%). However, these are not transcribed here as they are not in a clear text format.

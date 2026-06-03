@@ -1,0 +1,60 @@
+**NURSING ASSESSMENT ON ADMISSION**
+
+**Date & Time of Nursing Initial Assessment:** $06-2-16$    $6:47pm$
+
+**General Consent Signed: Yes / No**
+
+| **Vital Signs** | **Temp** $98°F$ | **Pulse:** $116$   $b$ /Min | **Resp:** $22$   $b$ /Min | **BP:** $87/50$ |
+| --- | --- | --- | --- | --- |
+| **Height** | **Weight** $48kg$ | **Blood Group** | **SPO2 (if required)** $98$ | **GRBS (if required)** $443$ |
+
+**Complaints during admission and its duration**
+
+$Fever, generalized weakness \\ since  3 days$
+
+|  |  |  | 
+| --- | --- | --- |
+| **Oriented:** Yes / No $\checkmark$ | **Speech:** Clear / Slurred  | **Speech:** Clear / Slurred  |
+| **Level of Consciousness Conscious / Semiconscious/ Unconscious** | **Visual Impalment:** None / Wears Spectacles / Blind-L R  | **Extremity Strength:** Equal / Unequal  |
+| **Pupils : Equal / Unequal / Reactive / Sluggish** Equal | **Hearing Impairment:** None / Uses Aids / Deaf - L - R  | **Pain :** Yes / No $\checkmark$ **Location:** $Body$ |
+
+**Pain Scale**
+
+| $0$  No Pain | $2$ Little Pain | $4$ Mild Pain | $6$ Moderate Pain | $8$ Severe Pain | $10$ Worst Pain |
+| --- | --- | --- | --- | --- | --- |
+
+$\checkmark \checkmark \checkmark$
+
+**Airway / Breathing**
+
+| **Airway :** Clear / Obstructed $\checkmark$ | **Dyspnea :** Present / Absent $\checkmark$ | **Wheezing :** Yes / No $\checkmark$ | 
+| --- | --- | --- | 
+|  | **Cough :** Yes / No $\checkmark$ | **Sputum :** Yes / No $\checkmark$ |
+
+**Circulation**
+
+| **Edema :** Present / Absent $\checkmark$ | **Location of Edema** | **Skin Perfusion :** Warm / Dry / Cool / Diaphoretic $\checkmark$ | **Capillary refill :** < $3$ Secs / > $3$ Secs $\checkmark$ |
+| --- | --- | --- | --- |
+
+**Skin & Mucous Membrane**
+
+| **Colour :** Fresh / Pale / Flushed / Cyanotic / Jaundiced $\checkmark$ | **Turgor :** Good / Fair / Poor $\checkmark$ | 
+| --- | --- |
+| **Temp :** Cool / Warm /Hot $\checkmark$ | **Mucous membrane:** Intact / Impaired $\checkmark$ | 
+| **Moisture :** Dry / Clammy $\checkmark$ | **Condition :** Pink / Pale / Moist / Dry $\checkmark$ |
+
+**Gastrointestinal**
+
+| **Loss of Appetite :** Yes / No $\checkmark$ | **Abdomen :** Soft / Firm / Tender / Distention / Expelling Flatus | **Swallowing difficulty :** Yes / No |
+| --- | --- | --- |
+| **Nausea / Vomiting / Diarrhoea Constipation** |  |  |
+
+**Genitourinary**
+
+| **Dysuria :**Yes / No $\checkmark$ | **Frequency :** | **Hematuria :** Yes / No $\checkmark$ |
+| --- | --- | --- |
+| **Incontinence :** Yes / No $\checkmark$ |  |  |
+
+**Any Drug Allergy**
+
+$\not$ $Known$

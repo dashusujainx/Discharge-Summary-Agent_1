@@ -1,0 +1,20 @@
+**DIABETS HOSPITAL MONITORING CHART**
+
+| DATE | values | BBF | ABF | BL | AL | BD | AD | Midnight | Remarks |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|       | BS |      |     | 267 |     | 389 |     |       | 2      |
+|       | Insulin dose | 16 U |     |     |     | 30 U |     |       |        |
+| 1/3/96 | BS   | 265 |     | 138 |     | 270 mgdl |     |       | 3      |
+|       | Insulin dose | 22 u H.A. |     | 12 IU (Lantus) |     | 12 IU |     |       |        |
+| 2/3/96 | BS   | 217 |     | 167 mg/dl |     |      |     |       | 7      |
+|       | Insulin dose | 18 u (H.A.) |     | 12 IU (Lantus) |     |      |     |       |        |
+|       | BS   |      |     |      |     |      |     |       |        |
+|       | Insulin dose |      |     |      |     |      |     |       |        |
+|       | BS   |      |     |      |     |      |     |       |        |
+|       | Insulin dose |      |     |      |     |      |     |       |        |
+|       | BS   |      |     |      |     |      |     |       |        |
+|       | Insulin dose |      |     |      |     |      |     |       |        |
+|       | BS   |      |     |      |     |      |     |       |        |
+|       | Insulin dose |      |     |      |     |      |     |       |        |
+
+**BS-Blood Sugar(GRBSL/RBSL)**

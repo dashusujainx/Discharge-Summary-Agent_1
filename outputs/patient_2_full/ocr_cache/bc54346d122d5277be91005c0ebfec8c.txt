@@ -1,0 +1,33 @@
+**PROCEDURE CHART**
+
+Weight:   7  kg  
+Date    Department:  Internal  Medicine  
+
+| Date | 26/8/26 | 27/2/27 | 28/7/26 | 1/3/26 | 2/3/26 | 
+| --- | --- | --- | --- | --- | --- | 
+
+**Procedures**
+IV Cannulization           | Yes(18-G) | 20       | Yes       | (18G)     | 20      
+N.G. Tube In sertion      |          | 16G      |           |           |           
+Felley's Catheterisation  | Yes   16F | Yes 16G  | Yes  16G | PIC Reimar |           
+L.P.                      |          |          |           |           |           
+I.C.D.                    |          |          |           |           |           
+C.V.P.                    |          |          |           |           |           
+Intubation                |          |          |           |           |           
+P.D.                      |          |          |           |           |           
+Phototherapy              |          |          | yes       |           |           
+Urine C./S.               |          |          | yes       |           |           
+Blood C./S.               |          |          | yes       |           |           
+PB Sets & Vein 0 Line     | yes(100m) | yes      | yes       | yes       | yes      
+Oxygen                    | yes      |          |           |           |           
+Ventilator                |          |          |           |           |           
+Bubble CPAP               |          |          |           |           |           
+NP02                      |          |          |           |           |           
+HFNC                      |          |          |           |           |           
+Viral Serology/Study     |          |          |           |           |           
+Bone marrow               |          |          |           |           |           
+USG/ECHO                  |          |          | yes       |           |           
+Tapping                   |          |          |           |           |           
+Blood Transfussion        |          |          |           |           |           
+Dressing                  |         
+Signature

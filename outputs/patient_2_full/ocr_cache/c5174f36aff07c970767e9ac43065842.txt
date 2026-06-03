@@ -1,0 +1,30 @@
+**INTAKE/OUTPUT CHART**
+
+| TIME | INTAKE |  |  | OUTPUT |  |  |  |
+| --- | --- | --- | --- | --- | --- | --- | --- |
+|  | Parenteral | Qunatity | Oral/NGT | Quantity | Urine | Drainage | Vomitus / Bowels | Ryle's Tube Aspiration |
+|  |  |  |  |  |  |  |  |  |
+|  |  |  |  |  |  |  |  |  |
+| 8pm | Parenteral | 150cc |  |  |  |  |  |  |
+|  |  |  |  | 100cc |  |  |  |  |
+| 9pm | 150cc |  |  | 100cc |  |  |  |  |
+| 10pm | 150cc |  |  |  |  |  |  |  |
+|  |  |  |  | 70cc |  |  |  |  |
+| 11pm | 150cc |  |  | 100cc |  |  |  |  |
+|  |  |  |  | 100cc |  |  |  |  |
+| 12am | 150cc |  |  | 70cc |  |  |  |  |
+| 1am | 150cc |  |  | 100cc |  |  |  |  |
+|  |  |  |  | 80cc |  |  |  |  |
+| 2am | 150cc |  |  | 90cc |  |  |  |  |
+| 3am |  |  |  | 90cc |  |  |  |  |
+|  |  |  | 100cc | 80cc |  |  |  |  |
+| 4am |  |  |  | 90cc |  |  |  |  |
+| 5am |  |  |  | 80cc |  |  |  |  |
+| 6am |  |  | 120cc | 90cc |  |  |  |  |
+|  | 200cc | 80cc |  |  |  |  |  |  |
+| 7am |  |  | PIC Gastric |  |  |  |  |  |
+| 8am |  |  |  |  |  |  |  |  |
+|  |  |  |  |  |  |  |  |  |
+|  | Intake - 1350cc |  |  |  |  |  |  |  |
+|  | output - 1325cc |  |  |  |  |  |  |  |
+|  | +25 |  |  |  |  |  |  |  |

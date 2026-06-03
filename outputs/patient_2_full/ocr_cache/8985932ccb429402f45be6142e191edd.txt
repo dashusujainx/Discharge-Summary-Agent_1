@@ -1,0 +1,32 @@
+**NURSES NOTES**
+
+| Known Drug Allergies | 
+| --- | 
+| Date & Time | Observation / Nsg Action / Response / Plan | Staff Name & ID | 
+| --- | --- | --- |
+
+Known Drug Allergies: Pen
+
+Date & Time | Observation / Nsg Action / Response / Plan | Staff Name & ID
+-----------|-----------------------------------------|---------------
+2:45 PM     | Parent for send no discharge            | 
+9:00 PM     | Summary & billing                      | 
+           | pale received to summary & billing     | 
+           | advise medication explain               | 
+           | health education given                 | 
+           | opt fill oximeter & summary           | 
+           | all original sent to patient attorney  | 
+3:00 PM     |                                     | 
+           | Bp band removed                        | 
+           | Iv cannula not removed                 | 
+           | Iv discharge becoz                     | 
+           | medication advised                     | 
+           | billing clear & clean                  | 
+           | shoplift received                      | 
+4:00 PM     | patient get discharge                 | 
+
+NB: All injections to be initiated by persons administering and witnessing
+* Date Of Admission
+** Known Drug Allergies
+       0     2     4     6     8     10 
+      No Hurt   hurts little bit   hurts little more   hurts even more   hurts whole lot   hurts worst

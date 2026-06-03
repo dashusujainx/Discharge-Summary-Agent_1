@@ -1,0 +1,31 @@
+**NURSES NOTES**
+
+| Known Drug Allergies | 
+| --- | 
+| Date & Time | Observation / Nsg Action / Response / Plan | Staff Name & ID | 
+
+**Known Drug Allergies**
+$3130-$ - not known
+
+| Date & Time | Observation / Nsg Action / Response / Plan | Staff Name & ID |
+| --- | --- | --- |
+| $5AM$ | patient side bed making done. |  |
+| $6AM$ | patient $av$ medication given as per drug chard |  |
+| $7PM$ | patient GirBe checked & recorded to ePBRs. chard | $C$ |
+| $8AM$ | patients cherg hand over given to morning $S+$ |  |
+| $8AM$ | Pasent hand over taken from Night day $S+$ |  |
+| - | $\Rightarrow$ Parrent $if$ longrous $8$ oriented |  |
+| - | $\Rightarrow$ Patient valky as checked $+$ seconded |  |
+| $9AM$ | $\Rightarrow$ Parrent $spk$ grounds re done |  |
+| $10AM$ | Patient orel medication Advera as per drug char |  |
+| $11:30AM$ | Parrent seen by Dr for advice discharge |  |
+| on request $+$ cardio Ommpo |  |  |
+| $\Rightarrow$ Parrent seen by $M$ |  |
+| $12PM$ | ... advice $x-$ ray after leureld inforn Repor+ |  |
+
+NB: All injections to be initiated by persons administering and witnessing
+* Date Of Admission
+** Known Drug Allergies
+
+
+(no pain scale text, but pain scale icons are present at the bottom)

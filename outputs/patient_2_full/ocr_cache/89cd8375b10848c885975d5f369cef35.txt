@@ -1,0 +1,97 @@
+**ICU-CHART**
+
+**PITAL**
+
+| **IND** | **PANTOMED** | 
+| --- | --- |
+| **Name** |  Ernest |
+| **Admit** |  |
+| **Date** | $28.02.2024$   | 
+| **Time** |  POD:   |
+| **Sex** |  Male  |
+| **Age** |  |
+| **Ward** |  ICU  |
+| **Bed** |  |
+
+**Blood Group:** 
+
+**Allergies:** $\neg$ **Nil Known** 
+
+**Hx:**  
+
+**EF:** $\neg$ **NC** 
+
+**Culture** $\neg$ **Urine** $\neg$ **CSF**     **Stool**  
+
+**Diagnosis:** **THAT** 
+
+**Uncontrolled T.iam**    
+
+| **Medication** | **Dose** | **Route** | **Frequency** | **Date** | **Time** |
+| --- | --- | --- | --- | --- | --- |
+| Inj. Pantop | 40mg   | IV | OD |  |  |
+| Inj. Ceftriaxone | 1g | IV | BD |  |  |
+| Inj. Gentamicin | 80mg | IV | OD |  |  |
+| Inj. Amikacin | 500mg | IV | OD |  |  |
+| Tabs. Metformin | 500mg | PO | BD |  |  |
+| Tabs. Enoxaparin | 40mg | SC | OD |  |  |
+| Inj. Insulin Aspart | 4units | SC | TDS |  |  |
+| T. Dolo | 650mg | PO | TDS |  |  |
+
+**IV FLUIDS**
+
+| **Fluid** | **Vol (ml)** | **Duration** | **Time Started** | **Time Stopped** |
+| --- | --- | --- | --- | --- |
+|  |  |  |  |  |
+
+**FAST H U G S A B I D**
+
+**ICU Care Plan:**
+
+$\rightarrow$ **De escalation to SICU/ICU**
+
+$\rightarrow$ Inj. H. Adolcid  infusion @ 8 $\rightarrow$ taper as per GIR
+
+$\rightarrow$ **IV fluids** N/SSL R/LES $>700ml @$ 100ml/hr DNS Inj. L and $e$ @  100ml/hr
+
+**IC intubation** 
+
+$\rightarrow$ **Inj. Midazolam 5mg slow IV titrated to sedation**
+
+$\rightarrow$ **Vitals $\&$ I/Os monitoring**
+
+$\rightarrow$ **Prophylactic measures**  
+
+$\rightarrow$ **Prophylaxis: CTEG prophylaxis to delirium** 
+
+**Referral Advice:** 
+
+**Patient Holding Note:** 
+
+$\rightarrow$ **updated family** 
+
+$\rightarrow$ **Prognosis: need H to shift to MICU** 
+
+**Bedside Blood Glucose**
+
+| **Date** | **Time** | **Blood Glucose** | **Correction** | **Insulin** | **Remarks** |
+| --- | --- | --- | --- | --- | --- |
+|  |  |  |  |  |  |
+
+**Patient Blood Product**
+
+| **Date** | **Time** | **Blood/Blood Product** | **Units** | **Infused By** | **Infusion Time** | **Reaction if Any** | **Time of Onset** | **Severity** | **Time of Recovery** |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+|  |  |  |  |  |  |  |  |  |  |
+
+**Renal Replacement Therapy**
+
+| **Type** | **Date Started** | **Date Stopped** | **Fluids** | **Remarks** |
+| --- | --- | --- | --- | --- |
+|  |  |  |  |  |
+
+**RNSP Medications**
+
+| **Drug** | **Dose** | **Route** | **Frequency** | **Date** | **Time** |
+| --- | --- | --- | --- | --- | --- |
+| KMIV Inj. Sodium bicarbonate | 35meq | IV |  |  |  |

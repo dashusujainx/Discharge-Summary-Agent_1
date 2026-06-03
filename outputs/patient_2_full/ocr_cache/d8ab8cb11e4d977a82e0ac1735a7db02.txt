@@ -1,0 +1,26 @@
+**INVESTIGATION**                                          **RESULT VALUE**   **UNIT**     **REFERENCE RANGE**
+
+COMPLETE BLOOD COUNT (CBC)
+
+HAEMOGLOBIN (HB)                                          10.4               gm/dl        13.5 - 17.5
+TOTAL COUNT                                               7820               Cells/cumm   4000 - 11000
+NEUTROPHILS                                               72.6               %            35 - 65
+LYMPHOCYTES                                               13.0               %            24 - 44
+MONOCYTES                                                 10.9               %            3 - 6
+EOSINOPHILS                                               3.1                %            0 - 6
+BASOPHILS                                                 0.4                %            0 - 1
+
+PLATELET COUNT                                            1.28               Lakh/cumm    1.5 - 4.5
+RBC COUNT                                                 4.01               mill/cumm    4.5 - 5.9
+PACKED CELL VOLUME(PCV)                                   32.1               %            37 - 53
+MCV                                                       80.0               fl           80 - 100
+MCH                                                       25.9               pg           25 - 35
+MCHC                                                      32.4               g/dl         32 - 36
+RDW-CV                                                    12.9               %            11.5 - 14
+MEAN PLATELET VOLUME(MPV)                                  10.6               fl           6.5 - 12
+
+Impression: MANUAL PLATELET COUNT DONE.
+
+***End of Report***
+
+Please correlate laboratory results clinically. Contact laboratory for any clarification. All results are sample specific.

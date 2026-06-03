@@ -1,0 +1,43 @@
+The document provided appears to be a medical laboratory report containing two sections: **BIOCHEMISTRY REPORT** and **HAEMATOLOGY REPORT**.
+
+### **BIOCHEMISTRY REPORT**
+
+- **INVESTIGATION**
+  - ABG(Arterial Blood Gas) WITH LACTATE
+  - pH: 7.39 mm Hg (Reference Range: 7.35 - 7.45)
+  - pCO2: 32.00 mm Hg 
+  - pO2: 72 mmHg (Reference Range: Not provided in the visible text, but typically around 75-100 mmHg)
+  - Sodium [Na+]: 114 mmol/L (Reference Range: 136 - 146)
+  - Potassium [K]: 2.65 mmol/L (Reference Range: 3.4 - 4.5)
+  - Chloride [Cl-]: 83 mmol/L (Reference Range: 98 - 107)
+  - cCALCIUM: 0.71 mmol/L (Reference Range: 1.15 - 1.33)
+  - HCT: 36 % (Reference Range: 35 - 50)
+  - HAEMOGLOBIN: 11.80 g/dL (Reference Range: 12 - 16)
+  - SO2(C): 94.20 %
+  - CHCO3: 19.20 mmol/L (Reference Range: 20 - 28)
+  - BE: -5.80 mmol/L 
+  - LACTATE: 0.80 mmol/L (Reference Range: 0.3 - 2.0)
+
+### **HAEMATOLOGY REPORT**
+
+- **INVESTIGATION**
+  - COMPLETE BLOOD COUNT (CBC)
+  - HAEMOGLOBIN (HB): 12.0 gm/dl (Reference Range: 13.5 - 17.5)
+  - TOTAL COUNT: 6680 Cells/cumm (Reference Range: 4000 - 11000)
+  - NEUTROPHILS: 79.1 % (Reference Range: 35 - 66)
+  - LYMPHOCYTES: 12.1 % (Reference Range: 24 - 44)
+  - MONOCYTES: 7.9 % (Reference Range: 3 - 6)
+  - EOSINOPHILS: 0.6 % (Reference Range: 0 - 6)
+  - BASOPHILS: 0.3 % (Reference Range: 0 - 1)
+  - PLATELET COUNT: 1.80 Lakhs/cumm (Reference Range: 1.5 - 4.5)
+  - RBC COUNT: 4.57 mill/cumm (Reference Range: 4.5 - 5.9)
+  - PACKED CELL VOLUME(PCV): 35.9 % (Reference Range: 37 - 53)
+  - MCV: 78.6 fl (Reference Range: 80 - 100)
+  - MCH: 26.3 pg (Reference Range: 25 - 35)
+  - MCHC: 33.4 g/dl (Reference Range: 32 - 36)
+  - RDW-CV: 12.2 % (Reference Range: 11.5 - 14)
+  - MEAN PLATELET VOLUME(MPV): 10.9 fL (Reference Range: 6.5 - 12)
+
+**End of Report**
+
+Please correlate laboratory results clinically. Contact laboratory for any clarification. All results are sample specific.

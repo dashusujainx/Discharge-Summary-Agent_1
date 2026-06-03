@@ -1,0 +1,16 @@
+NURSING DOCUMENTATION
+
+(From..............................to..............................) 
+Date: $27/2/20$
+
+| Time | Event |
+| --- | --- |
+|  | $8pm \ to \ 8am$ |
+| $11pm$ | $\rightarrow$ Patient CT KUB cancelled due to night shift nurse due to patient's condition's |
+| $12pm$ | $\rightarrow$ Patient had a fever spike. Temp: $103^\circ$ Informed to Dr. Rama man and advise Taz - PCT $1gm$ asper advise given |
+| $1pm$ | $\rightarrow$ Patient has settled |
+| $3pm$ | $\rightarrow$ Patient had a Good Sleep |
+| $5 pm$ | $\rightarrow$ Patient Bed bath given. Bed making done, comfortable position given. $\rightarrow$ Patient bowel opened. |
+| $6AM$ | Patient IV medication Inj- Eenset $1gm$, Inj- PAN $1gm$, Inj- Meropenem $1gm$, Inj- Happy nerve plus given |
+| $7Am$ | Patient G.RBS checked and recorded in chart. |
+| $8am$ | Patient Hand over given to Morning duty Staff. |

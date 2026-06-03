@@ -1,0 +1,29 @@
+```
+INVESTIGATION                    RESULT VALUE       UNIT     REFERENCE RANGE
+
+SERUM CREATININE                1.04              mg/dL     0.7 - 1.4
+***End of Report***
+Please correlate laboratory results clinically. Contact laboratory for any clarification. All results are sample specific.
+
+
+INVESTIGATION                    RESULT VALUE       UNIT     REFERENCE RANGE
+
+COMPLETE BLOOD COUNT (CBC)      
+HAEMOGLOBIN (HB)               10.7              gm/dl     13.5 - 17.5
+TOTAL COUNT                     11560             Cells/cumm 4000 - 11000
+NEUTROPHILS                     83.9              %        35 - 66
+LYMPHOCYTES                    9.2               %        24 - 44
+MONOCYTES                       6.4               %        3 - 6
+EOSINOPHILS                    0.3               %        0 - 6
+BASOPHILS                       0.2               %        0 - 1
+PLATELET COUNT                  1.60              Lakhs/cumm 1.5 - 4.5
+RBC COUNT                       4.13              mill/cumm  4.5 - 5.9
+PACKED CELL VOLUME(PCV)         32.4              %        37 - 53
+MCV                             78.5              fL        80 - 100
+MCH                             25.9              pg        25 - 35
+MCHC                            33.0              g/dl      32 - 36
+RDW-CV                          13.2              %        11.5 - 14
+MEAN PLATELET VOLUME(MPV)       10.6              fL        6.5 - 12
+***End of Report***
+Please correlate laboratory results clinically. Contact laboratory for any clarification. All results are sample specific.
+```

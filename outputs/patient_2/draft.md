@@ -1,31 +1,76 @@
-# Discharge Summary Draft: patient_2
+# DISCHARGE SUMMARY DRAFT
+## ⚠️ FOR CLINICIAN REVIEW ONLY — NOT A FINAL CLINICAL DOCUMENT
+### Status: 🟡 REVIEW FLAGS PRESENT
 
-**Status:** Draft for clinician review. Do not use as a finalized clinical document.
+---
 
-## Required Sections
-- Patient demographics: MISSING - clinician review required.
-- Admission date: MISSING - clinician review required.
-- Discharge date: MISSING - clinician review required.
-- Principal diagnosis: MISSING - clinician review required.
-- Secondary diagnoses: MISSING - clinician review required.
-- Hospital course: MISSING - clinician review required.
-- Procedures: MISSING - clinician review required.
-- Allergies: MISSING - clinician review required.
-- Follow-up instructions: MISSING - clinician review required.
-- Pending results: MISSING - clinician review required.
-- Discharge condition: MISSING - clinician review required.
+## PATIENT DEMOGRAPHICS
+MISSING - clinician review required ⚠️ MISSING
 
-## Discharge Medications
-- MISSING - clinician review required.
+## ADMISSION DATE
+MISSING - clinician review required ⚠️ MISSING
 
-## Medication Changes
-- MISSING or no source-supported changes found.
+## DISCHARGE DATE
+09.03.2026
 
-## Safety / Review Flags
-- [pdf_ingestion] No readable text could be extracted. The draft must remain mostly missing until OCR/text extraction succeeds.
-- [missing_required] patient demographics is missing and must be completed by clinician review.
-- [missing_required] admission date is missing and must be completed by clinician review.
-- [missing_required] discharge date is missing and must be completed by clinician review.
-- [missing_required] principal diagnosis is missing and must be completed by clinician review.
-- [missing_required] hospital course is missing and must be completed by clinician review.
-- [missing_required] discharge condition is missing and must be completed by clinician review.
+## PRINCIPAL DIAGNOSIS
+ACUTE GASTROENTERITIS WITH DEHYDRATION
+
+## SECONDARY DIAGNOSES
+  - URINARY TRACT INFECTION
+  - DKA
+
+## HOSPITAL COURSE
+Patient presented to us with above mentioned complaints. After evaluation, she was admitted to ward. Initial investigations showed normal CBC, Serum creatinine (1.65mg/dl) done was elevated. Serum electrolytes done showed low serum sodium(128.00mnol/L). Urine routine done showed ketone bodies(+), 10-12/hpf of pus cells, 15-20/hpf of epithelial cells with presence of bactreia hence urine culture and sensitivity sent- report awaited. She was treated with IV fluids, IV antibiotics, IV PPI's, IV antiemetics and other supportive measures. USG abdomen and pelvis done showed Grade-I fatty liver changes and mildly edematous part of ascending colon upto the hepatic flexure- could represent colitis. Repeat Serum Creatinine(1.17mg/dl) done was normal. TSH and Free T4 done were normal. Stool routine done showed 2-3/hpf of red blood cells, plenty/hpf of pus cells. Patient was adviced to stay back for further management but attenders not willing to the same, hence being discharged at request with following advice.
+
+## PROCEDURES
+  - IV Cannulation done in left hand 20g
+
+## ALLERGIES
+MISSING - clinician review required ⚠️ MISSING
+
+## DISCHARGE CONDITION
+Hemodynamically stable
+
+## ADMISSION MEDICATIONS
+- MISSING - clinician review required MISSING - clinician review required MISSING - clinician review required MISSING - clinician review required
+
+## DISCHARGE MEDICATIONS
+- TAB. RACIPER 40MG BEFORE FOOD 1-0-0
+- TAB. EMESET 4MG 1-1-1 3 DAYS
+- TAB. OFLOX TZ MISSING - clinician review required MISSING - clinician review required 1-0-1
+- TAB M STRONG MISSING - clinician review required MISSING - clinician review required 1-0-0
+- TAB. ZEDOTT MISSING - clinician review required MISSING - clinician review required 1-1-1
+- TAB. ENTRO MISSING - clinician review required MISSING - clinician review required 1-0-1
+- TAB. MEFTAL SPAS 1 TAB SOS 4 TABLETS MISSING - clinician review required
+- TAB. LOPIRAMIDE 2MG 1-0-1 5 DAYS
+
+## MEDICATION CHANGES (Admission → Discharge)
+  [ADDED] TAB. RACIPER — 40MG BEFORE FOOD 1-0-0 | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
+  [ADDED] TAB. EMESET — 4MG 1-1-1 3 DAYS | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
+  [ADDED] TAB. OFLOX TZ — MISSING - clinician review required MISSING - clinician review required 1-0-1 | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
+  [ADDED] TAB M STRONG — MISSING - clinician review required MISSING - clinician review required 1-0-0 | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
+  [ADDED] TAB. ZEDOTT — MISSING - clinician review required MISSING - clinician review required 1-1-1 | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
+  [ADDED] TAB. ENTRO — MISSING - clinician review required MISSING - clinician review required 1-0-1 | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
+  [ADDED] TAB. MEFTAL SPAS — 1 TAB SOS 4 TABLETS MISSING - clinician review required | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
+  [ADDED] TAB. LOPIRAMIDE — 2MG 1-0-1 5 DAYS | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
+  [DISCONTINUED] MISSING - clinician review required — Was: MISSING - clinician review required MISSING - clinician review required MISSING - clinician review required | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
+
+## FOLLOW-UP INSTRUCTIONS
+Urine culture and sensitivity sent- report awaited. Review immediately in case of fever, loose stools, vomiting, fatigue. Review on 09.03.2026. CBC
+
+## PENDING RESULTS
+  - Urine culture and sensitivity
+
+---
+
+## SAFETY FLAGS & REVIEW ITEMS
+  🟡 [MISSING_FIELD] 9 medication change(s) have no documented reason — clinician reconciliation required.
+  🟡 [DRUG_INTERACTION] [MOCK drug-interaction lookup] No high-risk interactions detected in current medication list. Replace with real pharmacological API in production.
+  🟡 [MISSING_FIELD] Required field 'patient_demographics' is MISSING — clinician must supply this value before finalising.
+  🟡 [MISSING_FIELD] Required field 'admission_date' is MISSING — clinician must supply this value before finalising.
+  🟡 [MISSING_FIELD] Allergy status not documented — clinician must confirm before discharge.
+
+---
+*Generated by Discharge Summary Agent | Patient: patient_2 | Steps: 6*
+*THIS IS A DRAFT — All MISSING fields must be completed by clinician before finalising.*

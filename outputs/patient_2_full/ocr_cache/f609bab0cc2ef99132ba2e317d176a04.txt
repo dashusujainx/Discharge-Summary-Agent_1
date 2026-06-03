@@ -1,0 +1,138 @@
+# ICU-CHART
+
+## Score
+
+### BLOOD
+- **Date:** 24.02.24
+- **POD:** 
+
+## Weight
+## Blood Group:
+## Allergies - NO
+## Culture: NEGATIVE
+
+### ICU Details
+- **BP:** 
+- **HR:** 
+- **RR:** 
+- **BT:** 
+- **SpO2:** 
+- **FiO2:** 
+
+## Diagnosis: TAFZ
+## LIG CONTRAST MEDIA 7 days
+
+### Medication Chart
+
+| Drug | Dose | Route | Frequency | Start Date | Stop Date | 
+|------|------|-------|------------|------------|-----------|
+| INST. AMANTADINE | 400 | IV | OD |  |  |
+| INST. PROMETHAZINE | 50 | IV | OD |  |  |
+| LA ZANAMIVIR ET |  |  |  |  |  |
+| INST. SUGAMMED | 200 | IV | OD |  |  |
+| INST. HALOPERIDOL PLUS | 5 | IV | OD |  |  |
+| I | 5 | IV | OD |  |  |
+| I AMITRIPTYLINE |  |  |  |  |  |
+| T+S METOCLOPRAMIDE | 10 | IV | TDS |  |  |
+| GEL M - DEXAMETH 8MG/2ML | 2ml |  | BD |  |  |
+
+### Monitoring Chart
+
+| Date | Time | NPO | Intake | Output | Balance | 
+|------|------|-----|--------|--------|---------|
+| 24/2 | 00:00 |  |  |  |  |
+
+### Blood Pressure
+
+| Time | Systolic | Diastolic | Mean | 
+|------|----------|----------|------|
+| 00:00 | 125 | 63 | 84 |
+| 01:00 | 116 | 62 | 80 |
+| 02:00 | 106 | 56 | 73 |
+| 03:00 | 103 | 55 | 71 |
+| 04:00 | 102 | 54 | 70 |
+| 05:00 | 106 | 56 | 73 |
+| 06:00 | 113 | 64 | 80 |
+| 07:00 | 125 | 82 | 96 |
+
+### Medication
+
+| Time | Medication | 
+|------|------------|
+| 00:00 |  |
+| 01:00 |  |
+| 02:00 |  |
+| 03:00 |  |
+| 04:00 |  |
+| 05:00 |  |
+| 06:00 |  |
+
+### Care Plan
+
+- Oral diet
+- Crysvita monthly 5 days
+- IV fluids
+- Analgesic
+- ? Shift to ward - by EGY
+- Blood test 4/5
+
+### Referral Advice
+
+### FASTHUGABID
+
+### ICU Care Plan
+- Lt. N. Chendana
+  - Oral diet
+  - Crysvita monthly 5 days
+  - IV fluids
+  - Analgesic
+  - ? Shift to ward - by EGY
+  - Blood test 4/5
+
+### Patient Bleeding Score
+- Daily Xray/CT
+
+## Handwritten Notes
+
+- IN PANCREATITIS 
+- Worsening LFTs 
+- No fever 
+- IN PANCREATITIS 
+- CT ABDOMEN: 
+- TO ECHO 
+- T: 38.5 
+- ? sepsis
+
+### Additional Handwritten Notes
+- 1. H. HYDROXICOBAL 5MG & 500
+- 2. H. HYDROXICOBAL 5MG & 500
+- 3. H. HYDROXICOBAL 5MG & 500
+- 4. H. HYDROXICOBAL 5MG & 250
+
+### Lab Results
+
+- **Blood:** 
+  - **pH:** 7.45
+  - **pCO2:** 32
+  - **pO2:** 83
+  - **HCO3:** 23
+  - **Base Excess:** 1.4
+  - **Lactate:** 0.9
+
+- **Urine:** 
+  - **pH:** 
+  - **SG:** 
+  - **Leukocytes:** 
+  - **Nitrites:** 
+  - **Protein:** 
+  - **Glucose:** 
+  - **Ketones:** 
+  - **Bilirubin:** 
+  - **Urobilinogen:** 
+  - **Blood:** 
+
+### Progress/Plan
+
+## Handwritten Calculations and Notes
+
+## Fast HUG ABID

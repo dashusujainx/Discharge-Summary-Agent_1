@@ -4,6 +4,7 @@ import logging
 import os
 import re
 from pathlib import Path
+import time
 from typing import Optional
 
 from dotenv import load_dotenv
@@ -210,6 +211,8 @@ class DischargeSummaryAgent:
 
         summary = None
         if self._groq:
+            print("  Waiting 30s for rate limit cooldown before LLM extraction...")
+            time.sleep(30)
             summary = self._extract_with_groq(combined_text)
 
         if summary is None:
@@ -238,7 +241,7 @@ class DischargeSummaryAgent:
     def _extract_with_groq(self, text: str) -> Optional[DischargeSummary]:
         """Call Groq LLM to extract structured clinical facts."""
         # Truncate to avoid token limits — take first 12000 chars
-        text_trimmed = text[:12000] if len(text) > 12000 else text
+        text_trimmed = text[:4000] if len(text) > 4000 else text
 
         prompt = f"""You are a clinical documentation AI. Extract structured discharge summary data from the following patient medical records.
 

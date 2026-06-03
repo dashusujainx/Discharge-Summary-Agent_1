@@ -1,0 +1,36 @@
+**DRUG CHART (2)**
+
+**DRUGS IN ONLY CAPITAL LETTERS & SIGNED BY DOCTOR**
+
+Weight:  **71 kg** 
+
+**NEBULISATION**
+
+| Drug & Dosage |  |  |  |  |  | 
+| :---------- | :-: | :-: | :-: | :-: | :-: | 
+|  |  |  |  |  | 
+| Date | Doctor's signature |  |  |  |  | 
+|  |  |  |  |  | 
+| Drug & Dosage |  |  |  |  |  | 
+|  |  |  |  |  | 
+| Date | Doctor's signature |  |  |  |  | 
+|  |  |  |  |  | 
+| Drug & Dosage |  |  |  |  |  | 
+|  |  |  |  |  | 
+| Date | Doctor's signature |  |  |  |  | 
+|  |  |  |  |  | 
+
+
+**ONCE ONLY AND PREMEDICATION DRUGS :**
+
+| Date Time | Drug (Approved Name) | Dose | Route | Min \| Hr | Dr.'s Sign. | Given by |
+| :-------- | :-------------------- | :---- | :----- | :-------- | :--------- | :------- |
+|  |  |  |  |  |  | 
+|  |  |  |  |  |  | 
+
+
+**INTRAVENOUS FLUIDS AND CONTINUOUS INFUSIONS :**
+
+| Date Time | **IV Fluid Type** | **Ml/Hr** | Stop order |
+| :-------- | :----------------- | :-------: | :--------: |
+| **28/2/26  01pm** | **NSL @ ISOMELIN** <br> **orally soft diet** |  |  |

@@ -1,0 +1,48 @@
+# NURSES NOTES
+
+| Known Drug Allergies                         |                                             | Staff Name & ID |
+|---------------------------------------------|---------------------------------------------------------|-----------------|
+|                                             |                                                     |                 |
+| Date & Time                                  | Observation/ Nsg Action / Response / Plan               |                 |
+| 12:12 PM                                     |                                                     |                 |
+|                                             |                                                     |                 |
+| 2:00 PM                                     |                                                     |                 |
+|                                             | **Patient file send to discharge Summary & billing**   |                 |
+|                                             | ~~~                                                 |                 |
+|                                             | *Pale received to Summary & billing*                   |                 |
+| 3:00 PM                                     |                                                     |                 |
+|                                             | ~~~                                                 |                 |
+|                                             | Admit medication explain                                 |                 |
+|                                             |                                                     |                 |
+|                                             | health education given                                  |                 |
+|                                             |                                                     |                 |
+|                                             | opt: fill original Summary all original security     |                 |
+|                                             |                                                     |                 |
+|                                             | send to patient attorney                               |                 |
+|                                             |                                                     |                 |
+|                                             |                                                     |                 |
+|                                             | Ep band removed                                       |                 |
+|                                             |                                                     |                 |
+|                                             | Iv cannula not removed                                |                 |
+|                                             |                                                     |                 |
+|                                             | Iv discharge bready                                  |                 |
+|                                             |                                                     |                 |
+|                                             | medication Addressed                                  |                 |
+|                                             |                                                     |                 |
+|                                             | billing clear & clean                                  |                 |
+|                                             |                                                     |                 |
+|                                             | ehsp received                                        |                 |
+|                                             |                                                     |                 |
+|                                             | patient get discharge.                                |                 |
+|                                             |                                                     |                 |
+|                                             |                                                     |                 |
+|                                             |                                                     |                 |
+|                                             |                                                     |                 |
+|                                             |                                                     |                 |
+|                                             |                                                     |                 |
+|                                             |                                                     |                 |
+
+## NB: 
+- All injections to be initiated by persons administering and witnessing 
+- * Date Of Admission 
+- ** Known Drug Allergies

@@ -1,0 +1,34 @@
+# ER OBSERVATION CHART(1)
+
+MRN:_  
+ER      OP  
+Diagnosis:     DKA  
+Triage Category  
+Red     Yellow     Green  
+
+MLC No-  
+
+Time of arrival    ER Doctor: Time of response     Time of response  
+
+| Time |          | Time |          |
+|-------|----------|-------|----------|
+|       |          | Sao2  Oxygen |          |
+| Pulse |          | RR    |          |
+| BP    |          | Urine output (ml/hr) |          |
+| Temp  |          | Blood Glucose |          |
+| SaO2 on air |          | Pain score |          |
+| GCS   |          | Pain scale |          |
+
+Procedures  
+-> IV Cannulation done in left hand 20g  
+
+Investigations:  
+(Lab,Radiology,Pathology,others)     Time (patient /sample) sent     Time (patient/report) received     Referred To: Specialty  
+
+CBV, creat, SE  
+ABG, urine     P     Report     Report     Specialty  
+ECh     Sent to     Received  
+
+other orders:  
+
+Note: If score is> 2 please speak to consultant

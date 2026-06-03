@@ -1,0 +1,44 @@
+**PDA**  
+**PERICARDIUM** : No  
+**THROMBUS / VEGETATION** : Nil  
+
+**DOPPLER**  
+
+| **VALVES**     | **PEAK VELOCITY** | **PEAK GRADIENT** | **REMARKS**       |
+|----------------|-------------------|-------------------|-------------------|
+| **MITRAL**     | E&A-FUSED         | -                 | MR-Trivial       |
+| **TRICUSPID**  | 0.6 m/sec         | TR Gradient -28mmHg | TR- Mild         |
+| **AORTIC**     | 1.4m/sec          | 7 mmHg            | AR-Trivial       |
+| **PULMONARY**  | 0.8 m/sec         | 2 mmHg            |                   |
+
+**M MODE**  
+AO :22mm  
+LA :28mm  
+
+|                  | **LVIDd :38mm**   | **IVSd :10mm** | **EDV : ml** |
+|------------------|-------------------|---------------|--------------|
+|                  | **LVIDs : 25mm**  | **PWd: 10mm**  | **ESV : ml** |
+| **LVEF : 60%**  |                   |               |              |
+| **FS : 30%**     |                   |               | **TAPSE: 18mm** |
+
+**OTHER:**  
+Sinus Tachycardia (HR-149bpm)  
+IVC-12/6 mm, Normal Collapsing  
+
+**WALLMOTION ABNORMALITIES :** NO DEFINITE RWMA  
+
+**FINAL DIAGNOSIS:**  
+• NO DEFINITE RWMA  
+• NORMAL LV SYSTOLIC FUNCTION  
+• LVEF-60%  
+• AR/MR-TRIVIAL  
+• TR-MILD  
+• NO CLOT / VEGETATION  
+
+**INVESTIGATION**  
+**SERUM CREATININE**  
+**RESULT VALUE**           **UNIT**   **REFERENCE RANGE**  
+1.07                      mg/dL      0.7 - 1.4  
+
+***End of Report***  
+_Please correlate laboratory results clinically. Contact laboratory for any clarification. All results are sample specific._

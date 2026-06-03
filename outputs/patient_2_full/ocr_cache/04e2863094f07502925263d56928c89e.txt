@@ -1,0 +1,40 @@
+**DRUG CHART (1)**
+**DRUGS IN ONLY CAPITAL LETTERS & SIGNED BY DOCTOR**
+
+Allergies (if any)     not kown
+Diagnosis :     T2DM. AFI
+Weight :     71kg
+
+Regular Prescription
+
+| Drug | | | | | | | D4 | D5 | D6 | D7 |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| Dose | | | | | | | | |  |
+| Route | | | | | | | | |  |
+| Freq | | | | | | | | |  |
+| Date | | | | | | | | |  |
+| Doctor's signature | | | | | | | | |  |
+
+Drug     INJ MEROMAC.
+| | 28/2/26 | 1/3/26 | 2/3/26 | | | | | |
+| Dose | 1gm. | | | | | | | |  |
+| Route | IV | | | | | | | |  |
+| Freq | 1-1-1 | 1PAM      2P.M  2Pm  Ppishtr | | | | | |  |
+| Date | 28/2/26 | | | | | | | |  |
+| Doctor's signature |  | 10PM2. | | | | | | | 
+
+Drug     INJ PAN
+| | 28/2/26 | 1/3/26 | 2/3/26 | | | | | |
+| Dose | 40mg | | | | | | | |  |
+| Route | IV | | | | | | | |  |
+| Freq | 1oo | | | | | | | |  |
+| Date | 28/2/26 | | | | | | | |  |
+| Doctor's signature | | | | | | | | | 
+
+Drug     INJ EMESET
+| | 28/2/26 | 1/3/26 | 2/3/26 | | | | | |
+| Dose | umg | | | | | | | |  |
+| Route | IN | | | | | | | |  |
+| Freq | 1-1-1 | 10PM      2PM   2Pm  nigh | | | | | |  |
+| Date | 28/2/26 | | | | | | | |  |
+| Doctor's signature | | 10PMS | | | | | | |

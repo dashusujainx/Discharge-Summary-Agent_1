@@ -1,0 +1,45 @@
+**CLINICAL PATHOLOGY REPORT**
+
+**INVESTIGATION**                        **RESULT VALUE**   **UNIT**    **REFERENCE RANGE**
+
+URINE ROUTINE
+Physical Examination
+URINE PH                                  5.5
+COLOUR                                   PALE YELLOW
+APPEARANCE                              SLIGHTLY TURBID
+SPECIFIC GRAVITY                        1.015
+
+Chemical Examination
+URINE ALBUMIN                           PRESENT +
+SUGAR                                   PRESENT 1.5%
+KETONE BODIES                           PRESENT +
+BILE SALT                               ABSENT
+BILE PIGMENT                            ABSENT
+
+Microscopic Examination
+PUS CELLS                               4-5/hpf
+EPITHELIAL CELLS                        1-2/hpf
+ RBC'S                                   2-3/hpf
+NITRITE                                 ABSENT
+BACTERIA                                ABSENT
+
+Impression:                             AMORPHOUS URATES PRESENT.
+
+***End of Report***
+
+Please correlate laboratory results clinically. Contact laboratory for any clarification. All results are sample specific.
+
+**BIOCHEMISTRY REPORT**
+
+**INVESTIGATION**                        **RESULT VALUE**   **UNIT**    **REFERENCE RANGE**
+
+SERUM CREATININE                       0.85              mg/dL       0.7 - 1.4
+RANDOM BLOOD SUGAR (RBS)               496.00            mg/dl       80 - 140
+SERUM ELECTROLYTES
+ S.SODIUM                               127.00            mmol/L     135 - 150
+ S.POTASSIUM(K+)                        3.64             mmol/L     3.5 - 5
+ S.CHLORIDE                             84.90            mmol/L     90 - 108
+
+***End of Report***
+
+Please correlate laboratory results clinically. Contact laboratory for any clarification. All results are sample specific.

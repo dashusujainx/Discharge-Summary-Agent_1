@@ -1,0 +1,27 @@
+**INVESTIGATION**                                 **RESULT VALUE**     **UNIT**    **REFERENCE RANGE**  
+CLINICAL PATHOLOGY REPORT
+
+URINE ROUTINE
+Physical Examination                         5.5
+URINE PH
+COLOUR                                    YELLOW
+APPEARANCE                                TURBID
+SPECIFIC GRAVITY                          1.025
+Chemical Examination
+URINE ALBUMIN                            PRESENT ++
+SUGAR                                    PRESENT 1.0%
+KETONE BODIES                            PRESENT +++
+BILE SALT                                PRESENT
+BILE PIGMENT                             PRESENT
+
+Microscopic Examination
+PUS CELLS                                3-4/hpf
+EPITHELIAL CELLS                         2-3/hpf
+RBC**S                                   2-3/hpf
+NITRITE                                  ABSENT
+BACTERIA                                 ABSENT
+Impression:                              GRANULAR CAST PRESENT
+
+***End of Report***
+
+Please correlate laboratory results clinically. Contact laboratory for any clarification. All results are sample specific.

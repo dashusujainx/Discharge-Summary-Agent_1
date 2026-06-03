@@ -1,0 +1,25 @@
+**DISCHARGE CHECK LIST**
+
+| SL NO | DETAILS | REMARKS |
+| --- | --- | --- |
+| 1 | PATIENT DETAILS <br> FULL NAME <br> AGE/GENDER <br> IP NO <br> DATE OF ADMISSION <br> DATE OF DISCHARGE |  |
+| 2 | DISCHARGE SUMMARY | $\sim$ |
+| 3 | DISCHARGE MEDICATION | Advised by $L$ Liver $U$ |
+| 4 | BLOOD REPORTS |  |
+| 5 | RADIOLOGY REPORTS-CT/X-RAY | $\sim$ |
+| 6 | USG REPORTS | $\sim$ |
+| 7 | MRI REPORTS | NLA |
+| 8 | ECG | $\checkmark$ |
+| 9 | ECHO | $\sim$ |
+| 10 | PATIENT IP BANDS | Removed |
+| 11 | IV CANNULA | Not Removed $\sim$ to $D S$ $t n g$ |
+| 12 | CVP | NLA |
+| 13 | OXYGEN | N I M |
+| 14 | OTHER REPORTS OR FORMS | $\sim$ |
+| 15 | OPD FILE AND OLD REPORTS | $\sim$ |
+| 16 | BILLING CLEARANCE | $\sim$ |
+| 17 | ICU Chart | Attached |
+
+DISCHARGE STAFFS NAME: <u> CROSS CHECKED INCHARGE </u> 
+
+RECIVED PATIENT OR ATTENC

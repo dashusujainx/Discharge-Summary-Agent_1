@@ -1,0 +1,42 @@
+**TEST DESCRIPTION**                       **RESULT**           **UOM**          **BIOLOGICAL REFERENCE RANGE**
+
+HAEMATOLOGY
+COMPLETE BLOOD COUNT
+Haemoglobin (Automated/Blood)              11.4               gm/dL             13.0 - 17.0
+Total WBC Count (Automated/Blood)           7160               Cells/cmm         4000 - 11000 
+
+Differential Count (DC)
+Neutrophils                                 78                 %                 42 - 72
+Lymphocytes                                 17                 %                 20 - 50
+Eosinophils                                 1                  %                 00 - 06
+Monocytes                                   4                  %                 02 - 10 
+Basophil                                     00                 %                 00 - 01
+Packed Cell Volume - PCV (Automated/Blood) 32.8               %                 35 - 48
+RBC Count - (Red Blood Cell) (Automated/Blood)  4.25           Million/cmm       4.0 - 5.5
+Mean Corpuscular Volume - MCV                77.2               fL                80.0 - 100.0
+Mean Corpuscular Hemoglobin - MCH           26.8               pg                27.0 - 32.0
+Mean Corpuscular Hemoglobin Concentration - MCHC  34.8           gm/dL             31.0 - 35.0
+Platelet Count (Automated/Blood)            2.56              Lakhs/cmm         1.40 - 4.50
+
+BIOCHEMISTRY
+
+Glycosylated Hemoglobin - HbA1c 
+
+Mean Blood Glucose                          352.2              mg/dL       
+
+SEROLOGY
+CRP - (C-Reactive Protein) (Immunoturbidimetry/Serum)  68.23         mg/L     New Born 
+                                                                               0 days :Less than 0.6 mg/l 
+                                                                               1 day :Less than 3.2 mg/l 
+                                                                               7 Days :Less than 1.6 mg/l 
+                                                                               Adults :Less than 5.0 mg/l 
+
+Widal Test - Slide Method 
+
+Salmonella typhi "O"                        Positive 1:160 Dilutions 
+Salmonella typhi "H"                        Positive 1:80  Dilutions 
+Salmonella paratyphi "AH"                   Negative 1: 20 Dilutions 
+Salmonella paratyphi "BH"                   Negative 1: 20 Dilutions 
+
+Note :  1. Titres 1:80 and above of "O" antigen & 1:80 and above of "H" antigen are significant 
+        2. Rising titres are significant
