@@ -1,108 +1,103 @@
 from __future__ import annotations
-
 from enum import Enum
-from pathlib import Path
-from typing import Any
-
+from typing import List, Optional
 from pydantic import BaseModel, Field
 
 
 class SourceRef(BaseModel):
-    file: str
-    page: int | None = None
-    quote: str | None = None
+    file: str = ""
+    page: int = 0
+    quote: str = ""
 
 
 class Fact(BaseModel):
-    value: str = "MISSING"
-    status: str = "missing"
-    sources: list[SourceRef] = Field(default_factory=list)
-    notes: str | None = None
+    value: str = "MISSING - clinician review required"
+    status: str = "missing"   # missing | pending | conflicting | ok
+    sources: List[SourceRef] = Field(default_factory=list)
+    notes: Optional[str] = None
 
 
 class Medication(BaseModel):
-    name: str
-    dose: str | None = None
-    route: str | None = None
-    frequency: str | None = None
-    status: str = "unknown"
-    reason: str | None = None
-    sources: list[SourceRef] = Field(default_factory=list)
+    name: str = ""
+    dose: str = ""
+    route: str = ""
+    frequency: str = ""
+    status: str = "unknown"   # unknown | active | discontinued
+    reason: str = ""
+    sources: List[SourceRef] = Field(default_factory=list)
 
 
 class MedicationChange(BaseModel):
-    medication: str
-    change_type: str
-    details: str
-    reason: str | None = None
-    needs_reconciliation: bool = False
-    sources: list[SourceRef] = Field(default_factory=list)
+    medication: str = ""
+    change_type: str = ""     # ADDED | DISCONTINUED | CHANGED
+    details: str = ""
+    reason: str = "Not documented - clinician review required"
+    needs_reconciliation: bool = True
 
 
 class SafetyFlag(BaseModel):
-    category: str
-    severity: str = "review"
-    message: str
-    sources: list[SourceRef] = Field(default_factory=list)
+    category: str = ""        # conflict | missing_field | pending | unreadable | drug_interaction
+    severity: str = "review"  # review | critical
+    message: str = ""
+    sources: List[SourceRef] = Field(default_factory=list)
 
 
 class DischargeSummary(BaseModel):
+    # Required facts
     patient_demographics: Fact = Field(default_factory=Fact)
     admission_date: Fact = Field(default_factory=Fact)
     discharge_date: Fact = Field(default_factory=Fact)
     principal_diagnosis: Fact = Field(default_factory=Fact)
-    secondary_diagnoses: list[Fact] = Field(default_factory=list)
+    secondary_diagnoses: List[str] = Field(default_factory=list)
     hospital_course: Fact = Field(default_factory=Fact)
-    procedures: list[Fact] = Field(default_factory=list)
-    admission_medications: list[Medication] = Field(default_factory=list)
-    discharge_medications: list[Medication] = Field(default_factory=list)
-    medication_changes: list[MedicationChange] = Field(default_factory=list)
-    allergies: list[Fact] = Field(default_factory=list)
-    follow_up_instructions: list[Fact] = Field(default_factory=list)
-    pending_results: list[Fact] = Field(default_factory=list)
     discharge_condition: Fact = Field(default_factory=Fact)
-    conflicts: list[SafetyFlag] = Field(default_factory=list)
-    safety_flags: list[SafetyFlag] = Field(default_factory=list)
+
+    # Procedures
+    procedures: List[str] = Field(default_factory=list)
+
+    # Medications
+    admission_medications: List[Medication] = Field(default_factory=list)
+    discharge_medications: List[Medication] = Field(default_factory=list)
+    medication_changes: List[MedicationChange] = Field(default_factory=list)
+
+    # Allergies
+    allergies: Fact = Field(default_factory=Fact)
+
+    # Follow-up
+    follow_up_instructions: Fact = Field(default_factory=Fact)
+    pending_results: List[str] = Field(default_factory=list)
+
+    # Safety
+    safety_flags: List[SafetyFlag] = Field(default_factory=list)
 
 
 class ExtractionPage(BaseModel):
-    file: str
-    page: int
-    text: str
-    method: str
-    status: str
-    error: str | None = None
-
-
-class AgentState(BaseModel):
-    patient_id: str
-    input_paths: list[Path]
-    pages: list[ExtractionPage] = Field(default_factory=list)
-    summary: DischargeSummary = Field(default_factory=DischargeSummary)
-    flags: list[SafetyFlag] = Field(default_factory=list)
-    steps_taken: int = 0
-    done: bool = False
-    extraction_failed: bool = False
-    extraction_done: bool = False
-    validation_done: bool = False
-    safety_checked: bool = False
-    safety_checked: bool = False
-
-
-class TraceEvent(BaseModel):
-    step: int
-    reasoning: str
-    action: str
-    inputs: dict[str, Any] = Field(default_factory=dict)
-    result: dict[str, Any] = Field(default_factory=dict)
-    next_decision: str
+    file: str = ""
+    page: int = 0
+    text: str = ""
+    method: str = "embedded_text"   # embedded_text | ocr
+    status: str = "ok"              # ok | empty | error
+    error: Optional[str] = None
 
 
 class AgentAction(str, Enum):
-    READ_PDFS = "read_pdfs"
-    EXTRACT_FACTS = "extract_facts"
-    RECONCILE_MEDICATIONS = "reconcile_medications"
-    CHECK_SAFETY = "check_safety"
-    VALIDATE = "validate"
-    WRITE_OUTPUTS = "write_outputs"
-    STOP = "stop"
+    READ_PDFS = "READ_PDFS"
+    EXTRACT_FACTS = "EXTRACT_FACTS"
+    RECONCILE_MEDICATIONS = "RECONCILE_MEDICATIONS"
+    CHECK_SAFETY = "CHECK_SAFETY"
+    VALIDATE = "VALIDATE"
+    WRITE_OUTPUTS = "WRITE_OUTPUTS"
+    STOP = "STOP"
+
+
+class AgentState(BaseModel):
+    pages: List[ExtractionPage] = Field(default_factory=list)
+    summary: DischargeSummary = Field(default_factory=DischargeSummary)
+    flags: List[SafetyFlag] = Field(default_factory=list)
+    steps_taken: int = 0
+    done: bool = False
+    extraction_done: bool = False
+    reconciliation_done: bool = False
+    validation_done: bool = False
+    safety_checked: bool = False
+    pdfs_read: bool = False

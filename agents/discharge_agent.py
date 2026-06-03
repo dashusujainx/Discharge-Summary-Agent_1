@@ -1,28 +1,23 @@
 from __future__ import annotations
-
 import json
+import logging
 import os
 import re
 from pathlib import Path
+from typing import Optional
 
 from dotenv import load_dotenv
-from groq import Groq
-from tenacity import retry, stop_after_attempt, wait_fixed
+load_dotenv()
 
 from models.schemas import (
-    AgentAction,
-    AgentState,
-    DischargeSummary,
-    Fact,
-    Medication,
-    MedicationChange,
-    SafetyFlag,
-    SourceRef,
+    AgentAction, AgentState, DischargeSummary, ExtractionPage,
+    Fact, Medication, MedicationChange, SafetyFlag, SourceRef,
 )
 from tools.pdf_reader import extract_pdf_pages
 from tools.safety import detect_conflicting_facts, mock_drug_interaction_lookup
 from tools.trace import TraceLogger
 
+logger = logging.getLogger(__name__)
 
 REQUIRED_FACTS = [
     "patient_demographics",
@@ -33,11 +28,12 @@ REQUIRED_FACTS = [
     "discharge_condition",
 ]
 
+MISSING = "MISSING - clinician review required"
+
 
 class DischargeSummaryAgent:
     def __init__(
         self,
-        *,
         patient_id: str,
         input_paths: list[Path],
         output_dir: Path,
@@ -48,26 +44,52 @@ class DischargeSummaryAgent:
         ocr_provider: str = "auto",
         vision_model: str = "meta-llama/llama-4-scout-17b-16e-instruct",
         ocr_dpi: int = 150,
-        max_ocr_pages: int | None = None,
-    ) -> None:
-        load_dotenv()
-        self.state = AgentState(patient_id=patient_id, input_paths=input_paths)
+        max_ocr_pages: Optional[int] = None,
+    ):
+        self.patient_id = patient_id
+        self.input_paths = input_paths
         self.output_dir = output_dir
-        self.output_dir.mkdir(parents=True, exist_ok=True)
         self.max_steps = max_steps
         self.model = model
+        self.use_llm = use_llm
         self.enable_ocr = enable_ocr
         self.ocr_provider = ocr_provider
-        self.vision_model = os.getenv("GROQ_VISION_MODEL", vision_model)
+        self.vision_model = vision_model
         self.ocr_dpi = ocr_dpi
         self.max_ocr_pages = max_ocr_pages
-        self.trace = TraceLogger(output_dir / "trace.jsonl")
-        self.groq = Groq(api_key=os.getenv("GROQ_API_KEY")) if use_llm and os.getenv("GROQ_API_KEY") else None
+
+        self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.trace = TraceLogger(self.output_dir / "trace.jsonl")
+        self.state = AgentState()
+
+        # Init Groq client
+        self._groq = None
+        if use_llm:
+            api_key = os.getenv("GROQ_API_KEY")
+            if api_key:
+                try:
+                    from groq import Groq
+                    self._groq = Groq(api_key=api_key)
+                    logger.info("Groq client initialised.")
+                except Exception as exc:
+                    logger.warning(f"Groq init failed: {exc}")
+            else:
+                logger.warning("GROQ_API_KEY not set — LLM disabled.")
+
+    # ------------------------------------------------------------------
+    # Main loop
+    # ------------------------------------------------------------------
 
     def run(self) -> AgentState:
+        print(f"\n{'='*60}")
+        print(f"  Discharge Summary Agent — Patient: {self.patient_id}")
+        print(f"  PDFs: {[p.name for p in self.input_paths]}")
+        print(f"{'='*60}\n")
+
         while not self.state.done and self.state.steps_taken < self.max_steps:
             action = self._decide_next_action()
             self.state.steps_taken += 1
+
             if action == AgentAction.READ_PDFS:
                 self._read_pdfs()
             elif action == AgentAction.EXTRACT_FACTS:
@@ -80,411 +102,554 @@ class DischargeSummaryAgent:
                 self._validate()
             elif action == AgentAction.WRITE_OUTPUTS:
                 self._write_outputs()
+                self.state.done = True
             else:
                 self.state.done = True
 
-        if not self.state.done:
-            self._add_flag("control", "Agent stopped at hard step cap before completion.")
+        if self.state.steps_taken >= self.max_steps and not self.state.done:
+            self._add_flag("missing_field", f"Agent hit max step limit ({self.max_steps}). Output may be incomplete.")
             self._write_outputs()
+            self.state.done = True
+
+        print(f"\n{'='*60}")
+        print(f"  DONE — {self.state.steps_taken} steps, {len(self.state.flags)} flags")
+        print(f"  Output: {self.output_dir}")
+        print(f"{'='*60}\n")
         return self.state
 
-    def _decide_next_action(self) -> AgentAction:
-        if not self.state.pages:
-            return AgentAction.READ_PDFS
-        if self.state.extraction_failed:
-            return AgentAction.WRITE_OUTPUTS if self.state.validation_done else AgentAction.VALIDATE
-        if not self.state.extraction_done:
-            return AgentAction.EXTRACT_FACTS
-        if not self.state.summary.medication_changes and (
-            self.state.summary.admission_medications or self.state.summary.discharge_medications
-        ):
-            return AgentAction.RECONCILE_MEDICATIONS
-        if not self.state.safety_checked:
-            return AgentAction.CHECK_SAFETY
-        if not self.state.validation_done:
-            return AgentAction.VALIDATE
-        return AgentAction.WRITE_OUTPUTS
+    # ------------------------------------------------------------------
+    # Decision logic
+    # ------------------------------------------------------------------
 
-    def _read_pdfs(self) -> None:
+    def _decide_next_action(self) -> AgentAction:
+        s = self.state
+        if not s.pdfs_read:
+            reason = "PDFs not yet read — must extract text before anything else."
+            action = AgentAction.READ_PDFS
+        elif not s.extraction_done:
+            reason = "Text extracted but clinical facts not yet parsed."
+            action = AgentAction.EXTRACT_FACTS
+        elif not s.reconciliation_done:
+            reason = "Facts extracted — now reconcile admission vs discharge medications."
+            action = AgentAction.RECONCILE_MEDICATIONS
+        elif not s.safety_checked:
+            reason = "Medications reconciled — run safety/conflict checks."
+            action = AgentAction.CHECK_SAFETY
+        elif not s.validation_done:
+            reason = "Safety checked — validate all required fields are present."
+            action = AgentAction.VALIDATE
+        else:
+            reason = "All steps complete — write final outputs."
+            action = AgentAction.WRITE_OUTPUTS
+
+        self.trace.log(
+            step=s.steps_taken + 1,
+            reasoning=reason,
+            action=action.value,
+            inputs={"step": s.steps_taken + 1},
+            next_decision=action.value,
+        )
+        return action
+
+    # ------------------------------------------------------------------
+    # Step 1: Read PDFs
+    # ------------------------------------------------------------------
+
+    def _read_pdfs(self):
+        cache_dir = self.output_dir / "ocr_cache"
         all_pages = []
-        errors = []
-        for path in self.state.input_paths:
+        for pdf_path in self.input_paths:
+            print(f"  Reading: {pdf_path.name}")
             try:
-                pages = self._read_pdf_with_retry(path)
-                all_pages.extend(pages)
+                pages = extract_pdf_pages(
+                    pdf_path=pdf_path,
+                    enable_ocr=self.enable_ocr,
+                    ocr_provider=self.ocr_provider,
+                    vision_model=self.vision_model,
+                    ocr_dpi=self.ocr_dpi,
+                    max_ocr_pages=self.max_ocr_pages,
+                    cache_dir=cache_dir,
+                )
+                for p in pages:
+                    all_pages.append(ExtractionPage(**p))
+                print(f"    → {len(pages)} pages extracted from {pdf_path.name}")
             except Exception as exc:
-                errors.append({"file": str(path), "error": str(exc)})
+                logger.error(f"Failed to read {pdf_path}: {exc}")
+                self._add_flag("unreadable", f"Could not read {pdf_path.name}: {exc}")
 
         self.state.pages = all_pages
-        readable = [page for page in all_pages if page.text.strip()]
-        unreadable = [page for page in all_pages if not page.text.strip()]
-        self.state.extraction_failed = not readable
-        if self.state.extraction_failed:
-            self._add_flag(
-                "pdf_ingestion",
-                "No readable text could be extracted. The draft must remain mostly missing until OCR/text extraction succeeds.",
-            )
-        elif unreadable:
-            self._add_flag(
-                "partial_pdf_ingestion",
-                f"{len(unreadable)} page(s) could not be read and were excluded from extraction.",
-            )
+        self.state.pdfs_read = True
 
+        ok = sum(1 for p in all_pages if p.status == "ok")
+        empty = sum(1 for p in all_pages if p.status == "empty")
         self.trace.log(
             step=self.state.steps_taken,
-            reasoning="The agent needs source evidence before drafting any clinical content.",
+            reasoning="PDF reading complete.",
             action=AgentAction.READ_PDFS.value,
-            inputs={
-                "files": [str(path) for path in self.state.input_paths],
-                "enable_ocr": self.enable_ocr,
-                "ocr_provider": self.ocr_provider,
-                "vision_model": self.vision_model if self.ocr_provider in {"auto", "groq"} else None,
-                "max_ocr_pages": self.max_ocr_pages,
-            },
-            result={
-                "pages": len(all_pages),
-                "readable_pages": len(readable),
-                "unreadable_pages": len(unreadable),
-                "errors": errors,
-            },
-            next_decision="Extract facts if text exists; otherwise validate and flag missing fields.",
+            inputs={"files": [p.name for p in self.input_paths]},
+            result={"total_pages": len(all_pages), "ok": ok, "empty": empty},
+            next_decision=AgentAction.EXTRACT_FACTS.value,
         )
 
-    @retry(stop=stop_after_attempt(2), wait=wait_fixed(1))
-    def _read_pdf_with_retry(self, path: Path):
-        return extract_pdf_pages(
-            path,
-            enable_ocr=self.enable_ocr,
-            ocr_provider=self.ocr_provider,
-            groq_vision_model=self.vision_model,
-            dpi=self.ocr_dpi,
-            max_ocr_pages=self.max_ocr_pages,
-            cache_dir=self.output_dir / "ocr_cache",
-        )
+    # ------------------------------------------------------------------
+    # Step 2: Extract Facts
+    # ------------------------------------------------------------------
 
-    def _extract_facts(self) -> None:
-        text = self._source_text(limit_chars=28000)
-        if self.groq:
-            try:
-                self.state.summary = self._llm_extract(text)
-                mode = "groq"
-            except Exception as exc:
-                self._add_flag("llm_failure", f"Groq extraction failed, used conservative local extraction instead: {exc}")
-                self.state.summary = self._heuristic_extract(text)
-                mode = "heuristic_after_llm_failure"
-        else:
-            self.state.summary = self._heuristic_extract(text)
-            mode = "heuristic_no_api_key"
+    def _extract_facts(self):
+        # Build combined text
+        text_parts = []
+        for p in self.state.pages:
+            if p.text.strip():
+                text_parts.append(f"[FILE: {p.file} | PAGE: {p.page}]\n{p.text}")
+        combined_text = "\n\n---\n\n".join(text_parts)
 
+        if not combined_text.strip():
+            self._add_flag("missing_field", "No text could be extracted from any PDF page. All facts will be MISSING.")
+            self.state.extraction_done = True
+            return
+
+        summary = None
+        if self._groq:
+            summary = self._extract_with_groq(combined_text)
+
+        if summary is None:
+            print("  [WARN] LLM extraction failed or disabled — using local fallback.")
+            summary = self._extract_locally(combined_text)
+
+        self.state.summary = summary
         self.state.extraction_done = True
+
         self.trace.log(
             step=self.state.steps_taken,
-            reasoning="The agent extracts only source-supported fields and leaves unsupported fields missing.",
+            reasoning="Clinical fact extraction complete.",
             action=AgentAction.EXTRACT_FACTS.value,
-            inputs={"mode": mode, "characters": len(text)},
-            result={"principal_diagnosis": self.state.summary.principal_diagnosis.value},
-            next_decision="Reconcile medications if medication lists were found; otherwise safety check and validation.",
+            inputs={"text_length": len(combined_text)},
+            result={
+                "principal_diagnosis": summary.principal_diagnosis.value,
+                "admission_date": summary.admission_date.value,
+                "discharge_date": summary.discharge_date.value,
+                "patient_demographics": summary.patient_demographics.value,
+                "discharge_medications_count": len(summary.discharge_medications),
+                "pending_results_count": len(summary.pending_results),
+            },
+            next_decision=AgentAction.RECONCILE_MEDICATIONS.value,
         )
 
-    def _source_text(self, limit_chars: int) -> str:
-        chunks = []
-        for page in self.state.pages:
-            if page.text.strip():
-                chunks.append(f"[{Path(page.file).name} p.{page.page}]\n{page.text.strip()}")
-        return "\n\n".join(chunks)[:limit_chars]
+    def _extract_with_groq(self, text: str) -> Optional[DischargeSummary]:
+        """Call Groq LLM to extract structured clinical facts."""
+        # Truncate to avoid token limits — take first 12000 chars
+        text_trimmed = text[:12000] if len(text) > 12000 else text
 
-    def _llm_extract(self, text: str) -> DischargeSummary:
-        if self.groq is None:
-            raise RuntimeError("Groq client is not configured.")
-        client = self.groq
+        prompt = f"""You are a clinical documentation AI. Extract structured discharge summary data from the following patient medical records.
 
-        prompt = (
-            "Extract a discharge-summary draft from the source notes. Never invent facts. "
-            "Every non-missing fact must include a short source quote and page. Mark unknown fields as MISSING. "
-            "Return JSON only matching this shape: "
-            + json.dumps(DischargeSummary().model_dump(), ensure_ascii=False)
-            + "\n\nSOURCE NOTES:\n"
-            + text
+STRICT RULES:
+1. NEVER invent or guess any clinical fact.
+2. If a field cannot be found in the text, set its value to exactly: "MISSING - clinician review required" and status to "missing".
+3. If a field has conflicting values in different notes, set status to "conflicting" and describe the conflict in notes.
+4. If a result is still pending (awaiting lab/culture), set status to "pending".
+5. Extract ONLY what is explicitly stated in the documents.
+
+Return a single valid JSON object matching this exact schema:
+{{
+  "patient_demographics": {{"value": "...", "status": "ok|missing|conflicting|pending", "notes": null}},
+  "admission_date": {{"value": "...", "status": "ok|missing"}},
+  "discharge_date": {{"value": "...", "status": "ok|missing"}},
+  "principal_diagnosis": {{"value": "...", "status": "ok|missing|conflicting", "notes": null}},
+  "secondary_diagnoses": ["...", "..."],
+  "hospital_course": {{"value": "...", "status": "ok|missing"}},
+  "discharge_condition": {{"value": "...", "status": "ok|missing"}},
+  "procedures": ["...", "..."],
+  "allergies": {{"value": "...", "status": "ok|missing"}},
+  "follow_up_instructions": {{"value": "...", "status": "ok|missing"}},
+  "pending_results": ["...", "..."],
+  "admission_medications": [
+    {{"name": "...", "dose": "...", "route": "...", "frequency": "...", "status": "active"}}
+  ],
+  "discharge_medications": [
+    {{"name": "...", "dose": "...", "route": "...", "frequency": "...", "status": "active"}}
+  ]
+}}
+
+PATIENT MEDICAL RECORDS:
+{text_trimmed}
+
+Return ONLY the JSON object. No explanation, no markdown, no extra text."""
+
+        from tenacity import retry, stop_after_attempt, wait_fixed
+
+        @retry(stop=stop_after_attempt(3), wait=wait_fixed(2))
+        def _call():
+            resp = self._groq.chat.completions.create(
+                model=self.model,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0,
+                max_tokens=3000,
+            )
+            return resp.choices[0].message.content or ""
+
+        try:
+            raw = _call()
+            # Strip markdown code fences if present
+            raw = re.sub(r"```(?:json)?", "", raw).strip().strip("`")
+            data = json.loads(raw)
+            return self._dict_to_summary(data)
+        except Exception as exc:
+            logger.error(f"Groq extraction failed after retries: {exc}")
+            self._add_flag("missing_field", f"LLM extraction failed: {exc}. Falling back to local parser.")
+            return None
+
+    def _dict_to_summary(self, data: dict) -> DischargeSummary:
+        """Convert raw LLM JSON dict into DischargeSummary, safely."""
+
+        def to_fact(raw) -> Fact:
+            if isinstance(raw, dict):
+                return Fact(
+                    value=raw.get("value", MISSING) or MISSING,
+                    status=raw.get("status", "missing"),
+                    notes=raw.get("notes"),
+                )
+            if isinstance(raw, str):
+                return Fact(value=raw, status="ok" if raw and raw != MISSING else "missing")
+            return Fact()
+
+        def to_meds(raw_list) -> list[Medication]:
+            meds = []
+            if not isinstance(raw_list, list):
+                return meds
+            for m in raw_list:
+                if isinstance(m, dict):
+                    meds.append(Medication(
+                        name=m.get("name", ""),
+                        dose=m.get("dose", ""),
+                        route=m.get("route", ""),
+                        frequency=m.get("frequency", ""),
+                        status=m.get("status", "active"),
+                        reason=m.get("reason", ""),
+                    ))
+            return meds
+
+        return DischargeSummary(
+            patient_demographics=to_fact(data.get("patient_demographics")),
+            admission_date=to_fact(data.get("admission_date")),
+            discharge_date=to_fact(data.get("discharge_date")),
+            principal_diagnosis=to_fact(data.get("principal_diagnosis")),
+            secondary_diagnoses=data.get("secondary_diagnoses") or [],
+            hospital_course=to_fact(data.get("hospital_course")),
+            discharge_condition=to_fact(data.get("discharge_condition")),
+            procedures=data.get("procedures") or [],
+            allergies=to_fact(data.get("allergies")),
+            follow_up_instructions=to_fact(data.get("follow_up_instructions")),
+            pending_results=data.get("pending_results") or [],
+            admission_medications=to_meds(data.get("admission_medications")),
+            discharge_medications=to_meds(data.get("discharge_medications")),
         )
-        response = client.chat.completions.create(
-            model=self.model,
-            messages=[
-                {"role": "system", "content": "You are a cautious clinical documentation extraction agent."},
-                {"role": "user", "content": prompt},
-            ],
-            temperature=0,
-            response_format={"type": "json_object"},
-        )
-        content = response.choices[0].message.content or "{}"
-        return DischargeSummary.model_validate_json(content)
 
-    def _heuristic_extract(self, text: str) -> DischargeSummary:
+    def _extract_locally(self, text: str) -> DischargeSummary:
+        """Conservative local regex-based fallback. Flags everything it cannot find."""
         summary = DischargeSummary()
-        summary.patient_demographics = self._demographics_fact(text)
-        summary.admission_date = self._value_after_label(text, "Admission Date")
-        summary.discharge_date = self._value_after_label(text, "Discharge Date")
-        summary.principal_diagnosis = self._value_after_label(text, "Principal Diagnosis")
-        summary.secondary_diagnoses = self._split_fact_list(self._value_after_label(text, "Secondary Diagnoses"))
-        summary.hospital_course = self._section_fact(text, ["hospital course", "brief hospital course"])
-        summary.procedures = self._procedure_facts(text)
-        summary.discharge_condition = self._value_after_label(text, "Discharge Condition")
-        summary.allergies = self._split_fact_list(self._value_after_label(text, "Allergies"))
-        summary.follow_up_instructions = self._split_fact_list(self._section_by_header(text, "Follow-up Instructions"))
-        summary.pending_results = self._split_fact_list(self._section_by_header(text, "Pending Results"))
-        summary.admission_medications = self._extract_medications(text, "admission")
-        summary.discharge_medications = self._extract_medications(text, "discharge")
+
+        # Try to find diagnosis
+        diag_match = re.search(
+            r"(?:diagnosis|diagnos[ei]s|impression)[:\s]+([^\n]{5,120})",
+            text, re.IGNORECASE
+        )
+        if diag_match:
+            summary.principal_diagnosis = Fact(value=diag_match.group(1).strip(), status="ok")
+
+        # Try to find dates
+        date_match = re.findall(r"\b(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})\b", text)
+        if date_match:
+            summary.admission_date = Fact(
+                value=date_match[0],
+                status="ok",
+                notes="First date found in document — verify against admission note.",
+            )
+            if len(date_match) > 1:
+                summary.discharge_date = Fact(
+                    value=date_match[-1],
+                    status="ok",
+                    notes="Last date found in document — verify against discharge note.",
+                )
+
+        # Try allergies
+        allergy_match = re.search(r"allerg[yi][^\n]*:?\s*([^\n]{3,80})", text, re.IGNORECASE)
+        if allergy_match:
+            summary.allergies = Fact(value=allergy_match.group(1).strip(), status="ok")
+
+        # Flag that this is a local fallback
+        self._add_flag(
+            "missing_field",
+            "Used local fallback extraction (LLM unavailable). Many fields may be MISSING — full clinician review required.",
+        )
         return summary
 
-    def _demographics_fact(self, text: str) -> Fact:
-        pieces = []
-        for label in ["Patient Name", "DOB", "MRN"]:
-            fact = self._value_after_label(text, label)
-            if fact.status != "missing":
-                pieces.append(f"{label}: {fact.value}")
-        if pieces:
-            value = "; ".join(pieces)
-            return Fact(value=value, status="sourced", sources=[self._source_for_quote(pieces[0])])
-        return Fact()
+    # ------------------------------------------------------------------
+    # Step 3: Reconcile Medications
+    # ------------------------------------------------------------------
 
-    def _value_after_label(self, text: str, label: str) -> Fact:
-        pattern = rf"(?im)^\s*{re.escape(label)}\s*:\s*(.+?)\s*$"
-        match = re.search(pattern, text)
-        if not match:
-            return Fact()
-        value = match.group(1).strip()
-        return Fact(value=value, status="sourced", sources=[self._source_for_quote(value)])
-
-    def _split_fact_list(self, fact: Fact) -> list[Fact]:
-        if fact.status == "missing":
-            return []
-        parts = [part.strip(" .") for part in re.split(r";|\n|\u2022", fact.value) if part.strip(" .")]
-        return [Fact(value=part, status="sourced", sources=fact.sources) for part in parts]
-
-    def _section_fact(self, text: str, labels: list[str]) -> Fact:
-        for label in labels:
-            fact = self._section_by_header(text, label)
-            if fact.status != "missing":
-                value = " ".join(fact.value.split())[:700]
-                return Fact(value=value, status="sourced", sources=[self._source_for_quote(value[:80])])
-        return Fact()
-
-    def _section_by_header(self, text: str, label: str) -> Fact:
-        headers = [
-            "Patient Name",
-            "DOB",
-            "MRN",
-            "Admission Date",
-            "Discharge Date",
-            "Principal Diagnosis",
-            "Secondary Diagnoses",
-            "Allergies",
-            "Admission Medications",
-            "Hospital Course",
-            "Discharge Medications",
-            "Follow-up Instructions",
-            "Pending Results",
-            "Discharge Condition",
-        ]
-        header_pattern = "|".join(re.escape(h) for h in headers if h.lower() != label.lower())
-        pattern = rf"(?is){re.escape(label)}\s*:\s*(.*?)(?=\n\s*(?:{header_pattern})\s*:|\Z)"
-        match = re.search(pattern, text)
-        if not match:
-            return Fact()
-        value = match.group(1).strip()
-        return Fact(value=value, status="sourced", sources=[self._source_for_quote(value[:80])])
-
-    def _procedure_facts(self, text: str) -> list[Fact]:
-        if re.search(r"no procedures? (were )?performed", text, re.IGNORECASE):
-            value = "No procedures were performed."
-            return [Fact(value=value, status="sourced", sources=[self._source_for_quote(value)])]
-        fact = self._section_by_header(text, "Procedures")
-        return [] if fact.status == "missing" else [fact]
-
-    def _extract_medications(self, text: str, context: str) -> list[Medication]:
-        meds: list[Medication] = []
-        block_fact = self._section_by_header(text, f"{context.title()} Medications")
-        if block_fact.status == "missing":
-            return meds
-        block = block_fact.value
-        for raw in re.split(r"\n|;|•|- ", block):
-            line = raw.strip(" .:-")
-            if not line or len(line) < 3:
-                continue
-            if re.search(r"\b(mg|mcg|unit|tab|tablet|cap|daily|bid|tid|qhs|po|iv)\b", line, re.IGNORECASE):
-                meds.append(Medication(name=line[:120], status=context, sources=[self._source_for_quote(line[:80])]))
-        return meds[:25]
-
-    def _source_for_quote(self, quote: str) -> SourceRef:
-        for page in self.state.pages:
-            if quote and quote[:30].lower() in page.text.lower():
-                return SourceRef(file=Path(page.file).name, page=page.page, quote=quote[:180])
-        return SourceRef(file="unknown", page=None, quote=quote[:180] if quote else None)
-
-    def _reconcile_medications(self) -> None:
-        admission = {self._med_key(med): med for med in self.state.summary.admission_medications}
-        discharge = {self._med_key(med): med for med in self.state.summary.discharge_medications}
+    def _reconcile_medications(self):
+        adm = {m.name.lower(): m for m in self.state.summary.admission_medications}
+        dis = {m.name.lower(): m for m in self.state.summary.discharge_medications}
         changes: list[MedicationChange] = []
 
-        for key, med in discharge.items():
-            if key not in admission:
-                changes.append(
-                    MedicationChange(
-                        medication=med.name,
-                        change_type="added",
-                        details="Present on discharge list but not admission list.",
-                        reason=med.reason,
-                        needs_reconciliation=not med.reason,
-                        sources=med.sources,
-                    )
-                )
-        for key, med in admission.items():
-            if key not in discharge:
-                changes.append(
-                    MedicationChange(
-                        medication=med.name,
-                        change_type="stopped",
-                        details="Present on admission list but not discharge list.",
-                        reason=med.reason,
-                        needs_reconciliation=not med.reason,
-                        sources=med.sources,
-                    )
-                )
+        # Drugs added at discharge
+        for name, med in dis.items():
+            if name not in adm:
+                changes.append(MedicationChange(
+                    medication=med.name,
+                    change_type="ADDED",
+                    details=f"{med.dose} {med.route} {med.frequency}".strip(),
+                    reason=med.reason or MISSING,
+                    needs_reconciliation=(not med.reason),
+                ))
+
+        # Drugs discontinued at discharge
+        for name, med in adm.items():
+            if name not in dis:
+                changes.append(MedicationChange(
+                    medication=med.name,
+                    change_type="DISCONTINUED",
+                    details=f"Was: {med.dose} {med.route} {med.frequency}".strip(),
+                    reason=MISSING,
+                    needs_reconciliation=True,
+                ))
+
+        # Drugs with changed dose/route
+        for name in adm:
+            if name in dis:
+                a = adm[name]
+                d = dis[name]
+                diffs = []
+                if a.dose and d.dose and a.dose != d.dose:
+                    diffs.append(f"dose {a.dose}→{d.dose}")
+                if a.route and d.route and a.route != d.route:
+                    diffs.append(f"route {a.route}→{d.route}")
+                if a.frequency and d.frequency and a.frequency != d.frequency:
+                    diffs.append(f"frequency {a.frequency}→{d.frequency}")
+                if diffs:
+                    changes.append(MedicationChange(
+                        medication=d.name,
+                        change_type="CHANGED",
+                        details="; ".join(diffs),
+                        reason=d.reason or MISSING,
+                        needs_reconciliation=(not d.reason),
+                    ))
 
         self.state.summary.medication_changes = changes
-        for change in changes:
-            if change.needs_reconciliation:
-                self._add_flag("medication_reconciliation", f"{change.medication}: {change.change_type} without documented reason.")
+        self.state.reconciliation_done = True
+
+        recon_needed = sum(1 for c in changes if c.needs_reconciliation)
+        if recon_needed:
+            self._add_flag(
+                "missing_field",
+                f"{recon_needed} medication change(s) have no documented reason — clinician reconciliation required.",
+            )
 
         self.trace.log(
             step=self.state.steps_taken,
-            reasoning="Medication changes need explicit review when the source notes do not document a reason.",
+            reasoning="Medication reconciliation complete.",
             action=AgentAction.RECONCILE_MEDICATIONS.value,
-            inputs={"admission_count": len(admission), "discharge_count": len(discharge)},
-            result={"changes": [change.model_dump() for change in changes]},
-            next_decision="Run mocked safety tools for discharge medications.",
+            inputs={"admission_meds": len(adm), "discharge_meds": len(dis)},
+            result={"changes": len(changes), "needs_reconciliation": recon_needed},
+            next_decision=AgentAction.CHECK_SAFETY.value,
         )
 
-    def _med_key(self, med: Medication) -> str:
-        return re.sub(r"[^a-z0-9]+", " ", med.name.lower()).strip().split(" ")[0]
+    # ------------------------------------------------------------------
+    # Step 4: Safety checks
+    # ------------------------------------------------------------------
 
-    def _check_safety(self) -> None:
-        flags = mock_drug_interaction_lookup(self.state.summary.discharge_medications)
-        self.state.flags.extend(flags)
-        self.state.summary.safety_flags = self.state.flags
+    def _check_safety(self):
+        conflict_flags = detect_conflicting_facts(self.state.summary)
+        self.state.flags.extend(conflict_flags)
+
+        med_names = [m.name for m in self.state.summary.discharge_medications]
+        interaction_flags = mock_drug_interaction_lookup(med_names)
+        self.state.flags.extend(interaction_flags)
+
         self.state.safety_checked = True
+
         self.trace.log(
             step=self.state.steps_taken,
-            reasoning="The agent calls an external-style safety tool only after it has a discharge medication list.",
+            reasoning="Safety and conflict checks complete.",
             action=AgentAction.CHECK_SAFETY.value,
-            inputs={"medications": [med.name for med in self.state.summary.discharge_medications]},
-            result={"flags": [flag.model_dump() for flag in flags]},
-            next_decision="Validate required fields and conflicts.",
+            inputs={"medications_checked": len(med_names)},
+            result={
+                "conflict_flags": len(conflict_flags),
+                "interaction_flags": len(interaction_flags),
+                "total_flags": len(self.state.flags),
+            },
+            next_decision=AgentAction.VALIDATE.value,
         )
 
-    def _validate(self) -> None:
-        for field in REQUIRED_FACTS:
-            fact = getattr(self.state.summary, field)
-            if fact.status == "missing" or fact.value == "MISSING":
-                self._add_flag("missing_required", f"{field.replace('_', ' ')} is missing and must be completed by clinician review.")
+    # ------------------------------------------------------------------
+    # Step 5: Validate required fields
+    # ------------------------------------------------------------------
 
-        diagnosis_values = self._source_diagnosis_values()
-        conflicts = detect_conflicting_facts("principal/discharge diagnoses", diagnosis_values)
-        self.state.flags.extend(conflicts)
-        self.state.summary.conflicts = conflicts
-        self.state.summary.safety_flags = self.state.flags
+    def _validate(self):
+        summary = self.state.summary
+        for field in REQUIRED_FACTS:
+            fact: Fact = getattr(summary, field)
+            if fact.status in ("missing",) or fact.value in ("", MISSING):
+                self._add_flag(
+                    "missing_field",
+                    f"Required field '{field}' is MISSING — clinician must supply this value before finalising.",
+                )
+
+        if not summary.discharge_medications:
+            self._add_flag("missing_field", "No discharge medications found — verify medication list with prescriber.")
+
+        if not summary.allergies.value or summary.allergies.status == "missing":
+            self._add_flag("missing_field", "Allergy status not documented — clinician must confirm before discharge.")
+
         self.state.validation_done = True
+        self.state.summary.safety_flags = self.state.flags
 
         self.trace.log(
             step=self.state.steps_taken,
-            reasoning="Before writing the draft, the agent checks for missing required fields and contradictions.",
+            reasoning="Validation of required fields complete.",
             action=AgentAction.VALIDATE.value,
-            result={"flag_count": len(self.state.flags), "conflict_count": len(conflicts)},
-            next_decision="Write draft and trace artifacts.",
+            inputs={"required_fields": REQUIRED_FACTS},
+            result={"total_flags": len(self.state.flags)},
+            next_decision=AgentAction.WRITE_OUTPUTS.value,
         )
 
-    def _source_diagnosis_values(self) -> list[str]:
-        text = self._source_text(limit_chars=40000)
-        values = []
-        for match in re.finditer(
-            r"(?im)^\s*(?:principal diagnosis|primary diagnosis|discharge diagnosis)\s*:\s*(.+?)\s*$",
-            text,
-        ):
-            value = match.group(1).strip()
-            if value:
-                values.append(value)
-        return values
+    # ------------------------------------------------------------------
+    # Step 6: Write outputs
+    # ------------------------------------------------------------------
 
-    def _write_outputs(self) -> None:
-        self.output_dir.mkdir(parents=True, exist_ok=True)
-        (self.output_dir / "summary.json").write_text(
+    def _write_outputs(self):
+        s = self.state.summary
+
+        # ---- draft.md ----
+        critical = [f for f in self.state.flags if f.severity == "critical"]
+        review = [f for f in self.state.flags if f.severity == "review"]
+
+        banner = "🔴 CRITICAL FLAGS PRESENT" if critical else ("🟡 REVIEW FLAGS PRESENT" if review else "🟢 NO FLAGS")
+
+        def fmt_fact(f: Fact) -> str:
+            val = f.value or MISSING
+            suffix = ""
+            if f.status == "missing":
+                suffix = " ⚠️ MISSING"
+            elif f.status == "conflicting":
+                suffix = f" ⚠️ CONFLICTING — {f.notes or ''}"
+            elif f.status == "pending":
+                suffix = " ⏳ PENDING"
+            return f"{val}{suffix}"
+
+        def fmt_meds(meds: list[Medication]) -> str:
+            if not meds:
+                return "  None documented"
+            lines = []
+            for m in meds:
+                lines.append(f"  - {m.name} {m.dose} {m.route} {m.frequency}".strip())
+            return "\n".join(lines)
+
+        def fmt_changes(changes: list[MedicationChange]) -> str:
+            if not changes:
+                return "  No changes detected"
+            lines = []
+            for c in changes:
+                recon = " ⚠️ RECONCILIATION REQUIRED" if c.needs_reconciliation else ""
+                lines.append(f"  [{c.change_type}] {c.medication} — {c.details} | Reason: {c.reason}{recon}")
+            return "\n".join(lines)
+
+        def fmt_flags(flags: list[SafetyFlag]) -> str:
+            if not flags:
+                return "  None"
+            lines = []
+            for f in flags:
+                icon = "🔴" if f.severity == "critical" else "🟡"
+                lines.append(f"  {icon} [{f.category.upper()}] {f.message}")
+            return "\n".join(lines)
+
+        draft = f"""# DISCHARGE SUMMARY DRAFT
+## ⚠️ FOR CLINICIAN REVIEW ONLY — NOT A FINAL CLINICAL DOCUMENT
+### Status: {banner}
+
+---
+
+## PATIENT DEMOGRAPHICS
+{fmt_fact(s.patient_demographics)}
+
+## ADMISSION DATE
+{fmt_fact(s.admission_date)}
+
+## DISCHARGE DATE
+{fmt_fact(s.discharge_date)}
+
+## PRINCIPAL DIAGNOSIS
+{fmt_fact(s.principal_diagnosis)}
+
+## SECONDARY DIAGNOSES
+{chr(10).join(f"  - {d}" for d in s.secondary_diagnoses) if s.secondary_diagnoses else "  None documented"}
+
+## HOSPITAL COURSE
+{fmt_fact(s.hospital_course)}
+
+## PROCEDURES
+{chr(10).join(f"  - {p}" for p in s.procedures) if s.procedures else "  None documented"}
+
+## ALLERGIES
+{fmt_fact(s.allergies)}
+
+## DISCHARGE CONDITION
+{fmt_fact(s.discharge_condition)}
+
+## ADMISSION MEDICATIONS
+{fmt_meds(s.admission_medications)}
+
+## DISCHARGE MEDICATIONS
+{fmt_meds(s.discharge_medications)}
+
+## MEDICATION CHANGES (Admission → Discharge)
+{fmt_changes(s.medication_changes)}
+
+## FOLLOW-UP INSTRUCTIONS
+{fmt_fact(s.follow_up_instructions)}
+
+## PENDING RESULTS
+{chr(10).join(f"  - {r}" for r in s.pending_results) if s.pending_results else "  None documented"}
+
+---
+
+## SAFETY FLAGS & REVIEW ITEMS
+{fmt_flags(self.state.flags)}
+
+---
+*Generated by Discharge Summary Agent | Patient: {self.patient_id} | Steps: {self.state.steps_taken}*
+*THIS IS A DRAFT — All MISSING fields must be completed by clinician before finalising.*
+"""
+
+        draft_path = self.output_dir / "draft.md"
+        draft_path.write_text(draft, encoding="utf-8")
+        print(f"  ✓ draft.md written → {draft_path}")
+
+        # ---- summary.json ----
+        json_path = self.output_dir / "summary.json"
+        json_path.write_text(
             self.state.summary.model_dump_json(indent=2),
             encoding="utf-8",
         )
-        (self.output_dir / "draft.md").write_text(self._render_markdown(), encoding="utf-8")
+        print(f"  ✓ summary.json written → {json_path}")
+
         self.trace.log(
             step=self.state.steps_taken,
-            reasoning="The agent writes a draft for clinician review, not a final clinical document.",
+            reasoning="All outputs written successfully.",
             action=AgentAction.WRITE_OUTPUTS.value,
-            result={"draft": str(self.output_dir / "draft.md"), "summary_json": str(self.output_dir / "summary.json")},
-            next_decision="Stop.",
+            inputs={},
+            result={
+                "draft_path": str(draft_path),
+                "json_path": str(json_path),
+                "flags_total": len(self.state.flags),
+                "critical_flags": len(critical),
+            },
+            next_decision=AgentAction.STOP.value,
         )
-        self.state.done = True
 
-    def _render_markdown(self) -> str:
-        s = self.state.summary
-        lines = [
-            f"# Discharge Summary Draft: {self.state.patient_id}",
-            "",
-            "**Status:** Draft for clinician review. Do not use as a finalized clinical document.",
-            "",
-            "## Required Sections",
-            f"- Patient demographics: {self._fmt_fact(s.patient_demographics)}",
-            f"- Admission date: {self._fmt_fact(s.admission_date)}",
-            f"- Discharge date: {self._fmt_fact(s.discharge_date)}",
-            f"- Principal diagnosis: {self._fmt_fact(s.principal_diagnosis)}",
-            f"- Secondary diagnoses: {self._fmt_facts(s.secondary_diagnoses)}",
-            f"- Hospital course: {self._fmt_fact(s.hospital_course)}",
-            f"- Procedures: {self._fmt_facts(s.procedures)}",
-            f"- Allergies: {self._fmt_facts(s.allergies)}",
-            f"- Follow-up instructions: {self._fmt_facts(s.follow_up_instructions)}",
-            f"- Pending results: {self._fmt_facts(s.pending_results)}",
-            f"- Discharge condition: {self._fmt_fact(s.discharge_condition)}",
-            "",
-            "## Discharge Medications",
-        ]
-        lines.extend(self._fmt_meds(s.discharge_medications))
-        lines.extend(["", "## Medication Changes"])
-        if s.medication_changes:
-            lines.extend(f"- {c.change_type.upper()}: {c.medication}. {c.details} Reason: {c.reason or 'MISSING - reconcile.'}" for c in s.medication_changes)
-        else:
-            lines.append("- MISSING or no source-supported changes found.")
-        lines.extend(["", "## Safety / Review Flags"])
-        if self.state.flags:
-            lines.extend(f"- [{flag.category}] {flag.message}" for flag in self.state.flags)
-        else:
-            lines.append("- No flags generated by available tools.")
-        return "\n".join(lines) + "\n"
+    # ------------------------------------------------------------------
+    # Helpers
+    # ------------------------------------------------------------------
 
-    def _fmt_fact(self, fact: Fact) -> str:
-        if fact.status == "missing" or fact.value == "MISSING":
-            return "MISSING - clinician review required."
-        source = fact.sources[0] if fact.sources else None
-        suffix = f" (source: {source.file} p.{source.page})" if source else ""
-        return f"{fact.value}{suffix}"
-
-    def _fmt_facts(self, facts: list[Fact]) -> str:
-        if not facts:
-            return "MISSING - clinician review required."
-        return "; ".join(self._fmt_fact(fact) for fact in facts)
-
-    def _fmt_meds(self, meds: list[Medication]) -> list[str]:
-        if not meds:
-            return ["- MISSING - clinician review required."]
-        return [f"- {med.name}" for med in meds]
-
-    def _add_flag(self, category: str, message: str) -> None:
-        if any(flag.category == category and flag.message == message for flag in self.state.flags):
-            return
-        flag = SafetyFlag(category=category, severity="clinician_review", message=message)
-        self.state.flags.append(flag)
-        self.state.summary.safety_flags = self.state.flags
+    def _add_flag(self, category: str, message: str, severity: str = "review"):
+        self.state.flags.append(SafetyFlag(category=category, severity=severity, message=message))

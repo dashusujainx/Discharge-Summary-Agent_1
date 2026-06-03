@@ -1,146 +1,280 @@
 from __future__ import annotations
-
-import argparse
+"""
+Part 2 — Simulated Learning from Doctor Edits
+Multi-armed bandit over prompt/template strategies,
+rewarded by reduced edit distance between agent draft and "doctor-corrected" version.
+"""
 import csv
 import json
-import sys
-from difflib import SequenceMatcher
+import random
 from pathlib import Path
 
-sys.path.append(str(Path(__file__).resolve().parents[1]))
-
-from models.schemas import DischargeSummary
-
+# ------------------------------------------------------------------ #
+# Strategies                                                           #
+# ------------------------------------------------------------------ #
 
 STRATEGIES = ["baseline", "explicit_missing", "safety_first"]
 
 
-def normalized_edit_distance(a: str, b: str) -> float:
-    if not a and not b:
-        return 0.0
-    return 1.0 - SequenceMatcher(None, a, b).ratio()
+def render_strategy(summary_json_path: Path, patient_id: str, strategy: str) -> str:
+    """Re-render a draft from summary.json using the chosen strategy."""
+    data = json.loads(summary_json_path.read_text(encoding="utf-8"))
 
+    def val(field: str) -> str:
+        f = data.get(field, {})
+        if isinstance(f, dict):
+            v = f.get("value", "MISSING - clinician review required")
+            return v or "MISSING - clinician review required"
+        return str(f) if f else "MISSING - clinician review required"
+
+    missing_label = {
+        "baseline": "MISSING - clinician review required",
+        "explicit_missing": "NOT DOCUMENTED in source notes — clinician must supply",
+        "safety_first": "⛔ CRITICAL MISSING — do not finalise without this value",
+    }[strategy]
+
+    def safe_val(field: str) -> str:
+        v = val(field)
+        if v == "MISSING - clinician review required":
+            return missing_label
+        return v
+
+    meds = data.get("discharge_medications", [])
+    med_lines = "\n".join(
+        f"  - {m.get('name','')} {m.get('dose','')} {m.get('route','')} {m.get('frequency','')}".strip()
+        for m in meds
+    ) or "  None documented"
+
+    pending = data.get("pending_results", [])
+    pending_lines = "\n".join(f"  - {r}" for r in pending) or "  None documented"
+
+    header = {
+        "baseline": "DISCHARGE SUMMARY DRAFT",
+        "explicit_missing": "DISCHARGE SUMMARY DRAFT (Explicit Missing Fields)",
+        "safety_first": "⚠️ DISCHARGE SUMMARY DRAFT — SAFETY FIRST REVIEW",
+    }[strategy]
+
+    return f"""# {header}
+## Patient: {patient_id}
+
+## PATIENT DEMOGRAPHICS
+{safe_val('patient_demographics')}
+
+## ADMISSION DATE
+{safe_val('admission_date')}
+
+## DISCHARGE DATE
+{safe_val('discharge_date')}
+
+## PRINCIPAL DIAGNOSIS
+{safe_val('principal_diagnosis')}
+
+## HOSPITAL COURSE
+{safe_val('hospital_course')}
+
+## DISCHARGE CONDITION
+{safe_val('discharge_condition')}
+
+## DISCHARGE MEDICATIONS
+{med_lines}
+
+## FOLLOW-UP
+{safe_val('follow_up_instructions')}
+
+## PENDING RESULTS
+{pending_lines}
+"""
+
+
+# ------------------------------------------------------------------ #
+# Simulated doctor editor                                              #
+# ------------------------------------------------------------------ #
 
 def simulated_doctor_edit(draft: str) -> str:
-    edited = draft.replace(
-        "MISSING - clinician review required.",
-        "Not documented in source notes - clinician review required.",
-    )
-    edited = edited.replace(
-        "**Status:** Draft for clinician review. Do not use as a finalized clinical document.",
-        "**Status:** Draft only; clinician must verify all source-supported content before finalization.",
-    )
-    edited = edited.replace(
-        "- MISSING or no source-supported changes found.",
-        "- Not documented in source notes - medication reconciliation required.",
-    )
+    """
+    Apply a consistent (hidden-to-the-agent) editing policy.
+    Represents what a real doctor would fix in the draft.
+    """
+    edited = draft
+
+    # Replace vague MISSING markers with clearer clinical language
+    replacements = [
+        ("MISSING - clinician review required", "To be confirmed by treating physician"),
+        ("NOT DOCUMENTED in source notes — clinician must supply", "Not found in records — verify with team"),
+        ("⛔ CRITICAL MISSING — do not finalise without this value", "Pending — must be completed before discharge"),
+        ("None documented", "Nil known"),
+        ("No changes detected", "No medication changes identified"),
+    ]
+    for old, new in replacements:
+        edited = edited.replace(old, new)
+
+    # Doctor always adds a sign-off line
+    if "Reviewed by:" not in edited:
+        edited += "\n\n---\n*Reviewed by: [Clinician signature required]*\n"
+
     return edited
 
 
-def render_strategy(summary: DischargeSummary, patient_id: str, strategy: str) -> str:
-    missing = "MISSING - clinician review required."
-    status = "**Status:** Draft for clinician review. Do not use as a finalized clinical document."
-    no_changes = "- MISSING or no source-supported changes found."
+# ------------------------------------------------------------------ #
+# Edit-distance metric                                                 #
+# ------------------------------------------------------------------ #
 
-    if strategy in {"explicit_missing", "safety_first"}:
-        missing = "Not documented in source notes - clinician review required."
-        no_changes = "- Not documented in source notes - medication reconciliation required."
-    if strategy == "safety_first":
-        status = "**Status:** Draft only; clinician must verify all source-supported content before finalization."
-
-    def fact(value: str, status_value: str) -> str:
-        return missing if status_value == "missing" or value == "MISSING" else value
-
-    lines = [
-        f"# Discharge Summary Draft: {patient_id}",
-        "",
-        status,
-        "",
-        "## Required Sections",
-        f"- Patient demographics: {fact(summary.patient_demographics.value, summary.patient_demographics.status)}",
-        f"- Admission date: {fact(summary.admission_date.value, summary.admission_date.status)}",
-        f"- Discharge date: {fact(summary.discharge_date.value, summary.discharge_date.status)}",
-        f"- Principal diagnosis: {fact(summary.principal_diagnosis.value, summary.principal_diagnosis.status)}",
-        f"- Hospital course: {fact(summary.hospital_course.value, summary.hospital_course.status)}",
-        f"- Discharge condition: {fact(summary.discharge_condition.value, summary.discharge_condition.status)}",
-        "",
-        "## Medication Changes",
-    ]
-    if summary.medication_changes:
-        lines.extend(
-            f"- {change.change_type.upper()}: {change.medication}. {change.details} Reason: {change.reason or missing}"
-            for change in summary.medication_changes
-        )
-    else:
-        lines.append(no_changes)
-    return "\n".join(lines) + "\n"
+def edit_distance_score(original: str, edited: str) -> float:
+    """
+    Normalised edit distance: 0.0 = identical (no edits), 1.0 = completely different.
+    Lower = better (less editing needed = higher reward).
+    Uses character-level Levenshtein approximation via difflib.
+    """
+    import difflib
+    ratio = difflib.SequenceMatcher(None, original, edited).ratio()
+    return 1.0 - ratio   # convert similarity to distance
 
 
-def run_bandit(summary_paths: list[Path], iterations: int, output_dir: Path) -> dict[str, object]:
+# ------------------------------------------------------------------ #
+# Multi-armed bandit                                                   #
+# ------------------------------------------------------------------ #
+
+class EpsilonGreedyBandit:
+    """Simple epsilon-greedy bandit over strategies."""
+
+    def __init__(self, strategies: list[str], epsilon: float = 0.2):
+        self.strategies = strategies
+        self.epsilon = epsilon
+        self.counts = {s: 0 for s in strategies}
+        self.rewards = {s: 0.0 for s in strategies}
+
+    def select(self) -> str:
+        if random.random() < self.epsilon:
+            return random.choice(self.strategies)
+        # Exploit: pick strategy with highest average reward
+        avg = {s: (self.rewards[s] / self.counts[s] if self.counts[s] > 0 else 0.0)
+               for s in self.strategies}
+        return max(avg, key=avg.__getitem__)
+
+    def update(self, strategy: str, reward: float):
+        self.counts[strategy] += 1
+        self.rewards[strategy] += reward
+
+    def best_strategy(self) -> str:
+        avg = {s: (self.rewards[s] / self.counts[s] if self.counts[s] > 0 else 0.0)
+               for s in self.strategies}
+        return max(avg, key=avg.__getitem__)
+
+    def stats(self) -> dict:
+        return {
+            s: {
+                "count": self.counts[s],
+                "avg_reward": round(self.rewards[s] / self.counts[s], 4) if self.counts[s] > 0 else 0.0,
+            }
+            for s in self.strategies
+        }
+
+
+# ------------------------------------------------------------------ #
+# Main runner                                                          #
+# ------------------------------------------------------------------ #
+
+def run_bandit(
+    summary_paths: list[Path],
+    iterations: int = 30,
+    output_dir: Path = Path("outputs/part2"),
+    patient_ids: list[str] | None = None,
+) -> dict:
+    """
+    Run the multi-armed bandit learning loop.
+
+    For each iteration:
+      1. Pick a strategy (epsilon-greedy)
+      2. Render a draft using that strategy
+      3. Apply simulated doctor edits
+      4. Compute edit distance → reward = 1 - edit_distance
+      5. Update bandit
+    """
     output_dir.mkdir(parents=True, exist_ok=True)
-    rows: list[dict[str, object]] = []
-    totals = {strategy: 0.0 for strategy in STRATEGIES}
-    counts = {strategy: 0 for strategy in STRATEGIES}
+    bandit = EpsilonGreedyBandit(STRATEGIES, epsilon=0.25)
 
-    summaries = [
-        (path.parent.name, DischargeSummary.model_validate_json(path.read_text(encoding="utf-8")))
-        for path in summary_paths
-    ]
+    if not summary_paths:
+        print("[Part2] No summary.json files provided — skipping bandit run.")
+        return {}
+
+    if patient_ids is None:
+        patient_ids = [p.parent.name for p in summary_paths]
+
+    curve_rows = []
+
+    print(f"\n{'='*50}")
+    print("  Part 2 — Bandit Learning Loop")
+    print(f"  Iterations: {iterations} | Strategies: {STRATEGIES}")
+    print(f"{'='*50}")
 
     for i in range(iterations):
-        patient_id, summary = summaries[i % len(summaries)]
-        if i < len(STRATEGIES):
-            strategy = STRATEGIES[i]
-        else:
-            strategy = min(STRATEGIES, key=lambda item: totals[item] / max(counts[item], 1))
+        # Pick patient + strategy
+        idx = i % len(summary_paths)
+        summary_path = summary_paths[idx]
+        patient_id = patient_ids[idx]
+        strategy = bandit.select()
 
-        draft = render_strategy(summary, patient_id, strategy)
+        # Render with chosen strategy
+        try:
+            draft = render_strategy(summary_path, patient_id, strategy)
+        except Exception as exc:
+            print(f"  [WARN] iter {i+1}: render failed ({exc}) — skipping")
+            continue
+
+        # Simulated doctor edits
         edited = simulated_doctor_edit(draft)
-        distance = normalized_edit_distance(draft, edited)
-        totals[strategy] += distance
-        counts[strategy] += 1
-        rows.append({"iteration": i + 1, "patient_id": patient_id, "strategy": strategy, "edit_distance": distance})
 
-    averages = {
-        strategy: (totals[strategy] / counts[strategy] if counts[strategy] else None)
-        for strategy in STRATEGIES
-    }
-    best_strategy = min(
-        (k for k, v in averages.items() if v is not None),
-        key=lambda k: averages[k] if averages[k] is not None else 1.0,
-    )
-    baseline = averages["baseline"] or 0.0
-    best = averages[best_strategy] or 0.0
-    result = {
-        "reward": "1 - normalized edit distance",
-        "baseline_average_edit_distance": baseline,
-        "best_strategy": best_strategy,
-        "best_average_edit_distance": best,
-        "relative_improvement": ((baseline - best) / baseline) if baseline else 0.0,
-        "strategy_averages": averages,
-    }
+        # Score: edit distance (lower = better draft → higher reward)
+        dist = edit_distance_score(draft, edited)
+        reward = 1.0 - dist   # reward = similarity (higher = less editing needed)
 
-    with (output_dir / "learning_curve.csv").open("w", newline="", encoding="utf-8") as fh:
-        writer = csv.DictWriter(fh, fieldnames=["iteration", "patient_id", "strategy", "edit_distance"])
+        bandit.update(strategy, reward)
+
+        curve_rows.append({
+            "iteration": i + 1,
+            "strategy": strategy,
+            "edit_distance": round(dist, 4),
+            "reward": round(reward, 4),
+        })
+
+        if (i + 1) % 5 == 0:
+            print(f"  Iter {i+1:3d} | strategy={strategy:20s} | dist={dist:.4f} | reward={reward:.4f}")
+
+    best = bandit.best_strategy()
+    stats = bandit.stats()
+
+    print(f"\n  Best strategy: {best}")
+    for s, st in stats.items():
+        print(f"    {s:20s} count={st['count']:3d}  avg_reward={st['avg_reward']:.4f}")
+
+    # Save CSV
+    csv_path = output_dir / "learning_curve.csv"
+    with csv_path.open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=["iteration", "strategy", "edit_distance", "reward"])
         writer.writeheader()
-        writer.writerows(rows)
-    (output_dir / "part2_metrics.json").write_text(json.dumps(result, indent=2), encoding="utf-8")
-    return result
+        writer.writerows(curve_rows)
 
+    # Save metrics JSON
+    metrics = {
+        "iterations": iterations,
+        "best_strategy": best,
+        "strategy_stats": stats,
+        "first_10_avg_dist": round(
+            sum(r["edit_distance"] for r in curve_rows[:10]) / max(len(curve_rows[:10]), 1), 4
+        ),
+        "last_10_avg_dist": round(
+            sum(r["edit_distance"] for r in curve_rows[-10:]) / max(len(curve_rows[-10:]), 1), 4
+        ),
+    }
+    improvement = metrics["first_10_avg_dist"] - metrics["last_10_avg_dist"]
+    metrics["improvement"] = round(improvement, 4)
+    metrics["improved"] = improvement > 0
 
-def main() -> None:
-    parser = argparse.ArgumentParser(description="Run simulated reviewer learning for Part 2.")
-    parser.add_argument("--summaries", nargs="+", default=["outputs/patient_2/summary.json"])
-    parser.add_argument("--iterations", type=int, default=12)
-    parser.add_argument("--out", default="outputs/part2")
-    args = parser.parse_args()
+    metrics_path = output_dir / "part2_metrics.json"
+    metrics_path.write_text(json.dumps(metrics, indent=2), encoding="utf-8")
 
-    paths = [Path(path) for path in args.summaries if Path(path).exists()]
-    if not paths:
-        raise SystemExit("No summary.json files found. Run the discharge agent first.")
-    result = run_bandit(paths, args.iterations, Path(args.out))
-    print(json.dumps(result, indent=2))
+    print(f"\n  Edit distance improvement: {improvement:+.4f}")
+    print(f"  CSV  → {csv_path}")
+    print(f"  JSON → {metrics_path}")
 
-
-if __name__ == "__main__":
-    main()
+    return metrics
