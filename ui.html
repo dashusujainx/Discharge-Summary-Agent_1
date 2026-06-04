@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Discharge Summary Agent</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f4f8; min-height: 100vh; display: flex; flex-direction: column; align-items: center; padding: 40px 20px; }
+  .card { background: white; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.08); padding: 36px; width: 100%; max-width: 640px; }
+  h1 { font-size: 22px; color: #1a202c; margin-bottom: 4px; }
+  .subtitle { color: #718096; font-size: 14px; margin-bottom: 28px; }
+  label { display: block; font-size: 13px; font-weight: 600; color: #4a5568; margin-bottom: 6px; }
+  input[type=text], select { width: 100%; padding: 10px 12px; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 14px; color: #1a202c; outline: none; transition: border 0.2s; }
+  input[type=text]:focus, select:focus { border-color: #667eea; }
+  .drop-zone { border: 2px dashed #cbd5e0; border-radius: 8px; padding: 32px; text-align: center; cursor: pointer; transition: all 0.2s; margin-bottom: 20px; }
+  .drop-zone:hover, .drop-zone.dragover { border-color: #667eea; background: #f7f8ff; }
+  .drop-zone p { color: #718096; font-size: 14px; }
+  .drop-zone .icon { font-size: 32px; margin-bottom: 8px; }
+  #file-list { font-size: 13px; color: #4a5568; margin-top: 8px; }
+  .field { margin-bottom: 18px; }
+  button { width: 100%; padding: 12px; background: #667eea; color: white; border: none; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: background 0.2s; }
+  button:hover { background: #5a67d8; }
+  button:disabled { background: #a0aec0; cursor: not-allowed; }
+  .status { margin-top: 20px; padding: 12px 16px; border-radius: 8px; font-size: 14px; display: none; }
+  .status.loading { background: #ebf8ff; color: #2b6cb0; display: block; }
+  .status.error { background: #fff5f5; color: #c53030; display: block; }
+  .result-card { margin-top: 24px; display: none; }
+  .result-card h2 { font-size: 16px; color: #1a202c; margin-bottom: 12px; }
+  .flags { margin-bottom: 16px; }
+  .flag { padding: 8px 12px; border-radius: 6px; font-size: 13px; margin-bottom: 6px; }
+  .flag.critical { background: #fff5f5; color: #c53030; border-left: 3px solid #fc8181; }
+  .flag.review { background: #fffbeb; color: #b7791f; border-left: 3px solid #f6ad55; }
+  .draft-box { background: #f7fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; font-family: monospace; font-size: 12px; white-space: pre-wrap; max-height: 400px; overflow-y: auto; color: #2d3748; }
+  .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid #bee3f8; border-top-color: #2b6cb0; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 8px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  input[type=file] { display: none; }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>🏥 Discharge Summary Agent</h1>
+  <p class="subtitle">Upload patient PDF(s) to generate a structured discharge summary draft.</p>
+
+  <div class="field">
+    <label for="patient_id">Patient ID</label>
+    <input type="text" id="patient_id" placeholder="e.g. patient_001" />
+  </div>
+
+  <div class="field">
+    <label>Upload PDF(s)</label>
+    <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
+      <div class="icon">📄</div>
+      <p>Click to select or drag & drop PDF files here</p>
+      <div id="file-list"></div>
+    </div>
+    <input type="file" id="file-input" multiple accept=".pdf" />
+  </div>
+
+  <div class="field">
+    <label for="ocr_provider">OCR Provider</label>
+    <select id="ocr_provider">
+      <option value="groq">Groq (recommended)</option>
+      <option value="auto">Auto</option>
+      <option value="none">None (digital PDFs only)</option>
+    </select>
+  </div>
+
+  <button id="submit-btn" onclick="submitForm()">Generate Discharge Summary</button>
+
+  <div class="status" id="status">
+    <span class="spinner"></span> Processing PDF... this may take 30–60 seconds.
+  </div>
+
+  <div class="result-card" id="result-card">
+    <h2>⚠️ Review Flags</h2>
+    <div class="flags" id="flags"></div>
+    <h2>📋 Draft Summary</h2>
+    <div class="draft-box" id="draft"></div>
+  </div>
+</div>
+
+<script>
+  const dropZone = document.getElementById('drop-zone');
+  const fileInput = document.getElementById('file-input');
+  let selectedFiles = [];
+
+  fileInput.onchange = () => { selectedFiles = Array.from(fileInput.files); updateFileList(); };
+  dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add('dragover'); };
+  dropZone.ondragleave = () => dropZone.classList.remove('dragover');
+  dropZone.ondrop = (e) => {
+    e.preventDefault(); dropZone.classList.remove('dragover');
+    selectedFiles = Array.from(e.dataTransfer.files).filter(f => f.name.endsWith('.pdf'));
+    updateFileList();
+  };
+
+  function updateFileList() {
+    document.getElementById('file-list').innerHTML = selectedFiles.length
+      ? '<br>' + selectedFiles.map(f => `✅ ${f.name}`).join('<br>')
+      : '';
+  }
+
+  async function submitForm() {
+    const patientId = document.getElementById('patient_id').value.trim();
+    if (!patientId) { alert('Please enter a Patient ID'); return; }
+    if (!selectedFiles.length) { alert('Please select at least one PDF'); return; }
+
+    const btn = document.getElementById('submit-btn');
+    const status = document.getElementById('status');
+    const resultCard = document.getElementById('result-card');
+
+    btn.disabled = true;
+    status.className = 'status loading';
+    status.innerHTML = '<span class="spinner"></span> Processing PDF... this may take 30–60 seconds.';
+    resultCard.style.display = 'none';
+
+    const form = new FormData();
+    form.append('patient_id', patientId);
+    form.append('ocr_provider', document.getElementById('ocr_provider').value);
+    selectedFiles.forEach(f => form.append('files', f));
+
+    try {
+      const res = await fetch('/summaries', { method: 'POST', body: form });
+      const data = await res.json();
+
+      if (!res.ok) { throw new Error(data.detail || 'Server error'); }
+
+      // Fetch the draft markdown
+      const draftRes = await fetch(`/outputs/${patientId}/draft`);
+      const draftData = await draftRes.json();
+
+      // Render flags
+      const flagsEl = document.getElementById('flags');
+      if (data.flags && data.flags.length) {
+        flagsEl.innerHTML = data.flags.map(f =>
+          `<div class="flag ${f.severity}">${f.severity === 'critical' ? '🔴' : '🟡'} <strong>${f.category}</strong>: ${f.message}</div>`
+        ).join('');
+      } else {
+        flagsEl.innerHTML = '<p style="color:#48bb78;font-size:13px">✅ No review flags found.</p>';
+      }
+
+      document.getElementById('draft').textContent = draftData.draft || 'No draft generated.';
+      resultCard.style.display = 'block';
+      status.style.display = 'none';
+
+    } catch (err) {
+      status.className = 'status error';
+      status.textContent = '❌ Error: ' + err.message;
+    } finally {
+      btn.disabled = false;
+    }
+  }
+</script>
+</body>
+</html>
