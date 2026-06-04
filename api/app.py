@@ -7,9 +7,13 @@ from fastapi.responses import HTMLResponse, JSONResponse
 
 from agents.discharge_agent import DischargeSummaryAgent
 
-app = FastAPI(...)
+app = FastAPI(
+    title="Discharge Summary Agent API",
+    description="Upload patient PDFs → get a structured discharge summary draft.",
+    version="0.1.0",
+)
 
-_UI_FILE = Path(__file__).parent / "ui.html"   # ← ADD THIS
+_UI_FILE = Path(__file__).parent / "ui.html"
 
 @app.get("/", response_class=HTMLResponse)
 def ui():
