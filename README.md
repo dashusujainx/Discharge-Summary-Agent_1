@@ -30,7 +30,7 @@ Upload a patient PDF at the live URL and get a structured discharge summary in m
 ![Discharge Summary Output](assets/Screenshot2.png)
 
 ### Demo Video
-![Demo](assets/Demo.mp4)
+https://github.com/user-attachments/assets/849ccc33-150c-42fd-a71d-4ef35ca68b31
 
 ---
 
