@@ -1,10 +1,9 @@
 from __future__ import annotations
-import shutil
-import tempfile
+import shutil, tempfile
 from pathlib import Path
 
 from fastapi import FastAPI, File, Form, UploadFile
-from fastapi.responses import JSONResponse
+from fastapi.responses import HTMLResponse, JSONResponse
 
 from agents.discharge_agent import DischargeSummaryAgent
 
@@ -14,11 +13,20 @@ app = FastAPI(
     version="0.1.0",
 )
 
+@app.get("/", response_class=HTMLResponse)
+def ui():
+    return open("api/ui.html").read()
 
 @app.get("/health")
 def health():
     return {"status": "ok"}
 
+@app.get("/outputs/{patient_id}/draft")
+def get_draft(patient_id: str):
+    p = Path("outputs") / patient_id / "draft.md"
+    if not p.exists():
+        return JSONResponse({"error": "not found"}, status_code=404)
+    return {"draft": p.read_text()}
 
 @app.post("/summaries")
 async def create_summary(
