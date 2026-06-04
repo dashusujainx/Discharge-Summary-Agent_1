@@ -30,7 +30,7 @@ Upload a patient PDF at the live URL and get a structured discharge summary in m
 ![Discharge Summary Output](assets/Screenshot2.png)
 
 ### Demo Video
-![Demo](assets/demo.mp4)
+![Demo](assets/Demo.mp4)
 
 ---
 
@@ -185,11 +185,11 @@ discharge-summary-agent/
 ### Sample Output
 
 ⚠️ Review Flags
-- 🟡 missing_field: 9 medication change(s) have no documented reason — clinician reconciliation required.
-- 🟡 drug_interaction: [MOCK drug-interaction lookup] No high-risk interactions detected in current medication list. Replace with real pharmacological API in production.
-- 🟡 missing_field: Required field 'patient_demographics' is MISSING — clinician must supply this value before finalising.
-- 🟡 missing_field: Required field 'admission_date' is MISSING — clinician must supply this value before finalising.
-- 🟡 missing_field: Allergy status not documented — clinician must confirm before discharge.
+-  missing_field: 9 medication change(s) have no documented reason — clinician reconciliation required.
+-  drug_interaction: [MOCK drug-interaction lookup] No high-risk interactions detected in current medication list. Replace with real pharmacological API in production.
+-  missing_field: Required field 'patient_demographics' is MISSING — clinician must supply this value before finalising.
+-  missing_field: Required field 'admission_date' is MISSING — clinician must supply this value before finalising.
+-  missing_field: Allergy status not documented — clinician must confirm before discharge.
 📋 Draft Summary
 
 # DISCHARGE SUMMARY DRAFT
@@ -203,10 +203,10 @@ discharge-summary-agent/
   - MISSING - clinician review required ⚠️ MISSING
 
 ## DISCHARGE DATE
-09.03.2026
+  - 09.03.2026
 
 ## PRINCIPAL DIAGNOSIS
-ACUTE GASTROENTERITIS WITH DEHYDRATION
+  - ACUTE GASTROENTERITIS WITH DEHYDRATION
 
 ## SECONDARY DIAGNOSES
   - URINARY TRACT INFECTION
@@ -222,10 +222,10 @@ Patient presented to us with above mentioned complaints. After evaluation, she w
   - MISSING - clinician review required ⚠️ MISSING
 
 ## DISCHARGE CONDITION
-Hemodynamically stable
+  - Hemodynamically stable
 
 ## ADMISSION MEDICATIONS
--  - MISSING - clinician review required MISSING - clinician review required MISSING - clinician review required MISSING - clinician review required
+  - MISSING - clinician review required MISSING - clinician review required MISSING - clinician review required MISSING - clinician review required
 
 ## DISCHARGE MEDICATIONS
 - TAB. RACIPER 40MG BEFORE FOOD 1-0-0
@@ -238,29 +238,29 @@ Hemodynamically stable
 - TAB. LOPIRAMIDE 2MG 1-0-1 5 DAYS
 
 ## MEDICATION CHANGES (Admission → Discharge)
-  [ADDED] TAB. RACIPER — 40MG BEFORE FOOD 1-0-0 | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
-  [ADDED] TAB. EMESET — 4MG 1-1-1 3 DAYS | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
-  [ADDED] TAB. OFLOX TZ — MISSING - clinician review required 1-0-1 5 DAYS | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
-  [ADDED] TAB M STRONG — MISSING - clinician review required 1-0-0 15 DAYS | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
-  [ADDED] TAB. ZEDOTT — MISSING - clinician review required 1-1-1 3 DAYS | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
-  [ADDED] TAB. ENTRO — MISSING - clinician review required 1-0-1 3 DAYS | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
-  [ADDED] TAB. MEFTAL SPAS — 1 TAB SOS 4 TABLETS MISSING - clinician review required | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
-  [ADDED] TAB. LOPIRAMIDE — 2MG 1-0-1 5 DAYS | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
-  [DISCONTINUED] MISSING - clinician review required — Was: MISSING - clinician review required MISSING - clinician review required MISSING - clinician review required | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
+-  [ADDED] TAB. RACIPER — 40MG BEFORE FOOD 1-0-0 | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
+-  [ADDED] TAB. EMESET — 4MG 1-1-1 3 DAYS | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
+-  [ADDED] TAB. OFLOX TZ — MISSING - clinician review required 1-0-1 5 DAYS | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
+-  [ADDED] TAB M STRONG — MISSING - clinician review required 1-0-0 15 DAYS | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
+-  [ADDED] TAB. ZEDOTT — MISSING - clinician review required 1-1-1 3 DAYS | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
+-  [ADDED] TAB. ENTRO — MISSING - clinician review required 1-0-1 3 DAYS | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
+-  [ADDED] TAB. MEFTAL SPAS — 1 TAB SOS 4 TABLETS MISSING - clinician review required | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
+-  [ADDED] TAB. LOPIRAMIDE — 2MG 1-0-1 5 DAYS | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
+-  [DISCONTINUED] MISSING - clinician review required — Was: MISSING - clinician review required MISSING - clinician review required MISSING - clinician review required | Reason: MISSING - clinician review required ⚠️ RECONCILIATION REQUIRED
 
 ## FOLLOW-UP INSTRUCTIONS
-Urine culture and sensitivity sent- report awaited. Review immediately in case of fever, loose stools, vomiting, fatigue. Review on 09.03.2026. CBC
+   - Urine culture and sensitivity sent- report awaited. Review immediately in case of fever, loose stools, vomiting, fatigue. Review on 09.03.2026. CBC
 
 ## PENDING RESULTS
-  - Urine culture and sensitivity
+   - Urine culture and sensitivity
 
 
 ## SAFETY FLAGS & REVIEW ITEMS
-- 🟡 [MISSING_FIELD] 9 medication change(s) have no documented reason — clinician reconciliation required.
-- 🟡 [DRUG_INTERACTION] [MOCK drug-interaction lookup] No high-risk interactions detected in current medication list. Replace with real pharmacological API in production.
-- 🟡 [MISSING_FIELD] Required field 'patient_demographics' is MISSING — clinician must supply this value before finalising.
-- 🟡 [MISSING_FIELD] Required field 'admission_date' is MISSING — clinician must supply this value before finalising.
-- 🟡 [MISSING_FIELD] Allergy status not documented — clinician must confirm before discharge.
+-  [MISSING_FIELD] 9 medication change(s) have no documented reason — clinician reconciliation required.
+-  [DRUG_INTERACTION] [MOCK drug-interaction lookup] No high-risk interactions detected in current medication list. Replace with real pharmacological API in production.
+-  [MISSING_FIELD] Required field 'patient_demographics' is MISSING — clinician must supply this value before finalising.
+-  [MISSING_FIELD] Required field 'admission_date' is MISSING — clinician must supply this value before finalising.
+-  [MISSING_FIELD] Allergy status not documented — clinician must confirm before discharge.
 
 
 *Generated by Discharge Summary Agent | Patient: excreq | Steps: 6*
