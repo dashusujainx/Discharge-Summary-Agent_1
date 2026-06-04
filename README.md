@@ -27,13 +27,10 @@ Upload a patient PDF at the live URL and get a structured discharge summary in m
 
 ### Web UI Output
 ![Discharge Summary Output](assets/Screenshot1.png)
-
-### Sample Output
-![Discharge Summary Output](assets/Screenshot 2.png)
+![Discharge Summary Output](assets/Screenshot2.png)
 
 ### Demo Video
-![Watch Demo Video](assets/Discharge Summary Agent - Google Chrome 2026-06-04 11-09-22.mp4)
-
+![Watch Demo Video](assets/Demo.mp4)
 
 ---
 
