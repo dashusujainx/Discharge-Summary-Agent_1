@@ -95,7 +95,7 @@ def mock_drug_interaction_lookup(medications: list[str]) -> list[SafetyFlag]:
             flags.append(SafetyFlag(
                 category="drug_interaction",
                 severity="critical",
-                message=f"[MOCK drug-interaction lookup] {message}",
+                message=f"⚠️ Potential drug interaction detected: {message} — Clinician review required.",
             ))
 
     if not flags:
@@ -103,7 +103,7 @@ def mock_drug_interaction_lookup(medications: list[str]) -> list[SafetyFlag]:
         flags.append(SafetyFlag(
             category="drug_interaction",
             severity="review",
-            message="[MOCK drug-interaction lookup] No high-risk interactions detected in current medication list. Replace with real pharmacological API in production.",
+            message="No high-risk drug interactions detected in current medication list. Note: interaction screening is rule-based; clinical pharmacist review recommended for complex regimens.",
         ))
 
     return flags

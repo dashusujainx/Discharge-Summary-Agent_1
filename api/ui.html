@@ -83,7 +83,7 @@
     <h2>⚠️ Review Flags</h2>
     <div class="flags" id="flags"></div>
     <h2>📋 Draft Summary</h2>
-    <div class="draft-box" id="draft"></div>
+    <div class="draft-box" id="draft" style="white-space:pre-wrap;font-family:inherit;font-size:13px;"></div>
   </div>
 </div>
  
@@ -145,11 +145,16 @@
       } else {
         flagsEl.innerHTML = '<p style="color:#48bb78;font-size:13px">✅ No review flags found.</p>';
       }
- 
-      document.getElementById('draft').textContent = draftData.draft || 'No draft generated.';
+      
+      document.getElementById('draft').innerHTML = (draftData.draft || 'No draft generated.')
+        .replace(/^### (.+)$/gm, '<h3 style="color:#2d3748;margin:12px 0 4px">$1</h3>')
+        .replace(/^## (.+)$/gm, '<h2 style="color:#1a202c;margin:16px 0 6px;border-bottom:1px solid #e2e8f0">$1</h2>')
+        .replace(/^# (.+)$/gm, '<h1 style="color:#1a202c;margin:0 0 12px">$1</h1>')
+        .replace(/^\- (.+)$/gm, '<div style="padding:2px 0 2px 16px">• $1</div>')
+        .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br>');
       resultCard.style.display = 'block';
       status.style.display = 'none';
- 
     } catch (err) {
       status.className = 'status error';
       status.textContent = '❌ Error: ' + err.message;
