@@ -1,130 +1,170 @@
 # Discharge Summary Agent
 
-Agentic AI system for the Dscribe take-home assignment. It reads synthetic patient source-note PDFs and produces a structured discharge-summary draft for clinician review, with explicit flags for missing, pending, conflicting, unreadable, and medication-reconciliation items.
+> **Live Demo:** [https://discharge-summary-agent-iqho.onrender.com](https://discharge-summary-agent-iqho.onrender.com)
 
-The system is intentionally conservative: it is a draft generator, not a final clinical documentation system.
+An agentic AI system that reads patient medical PDFs (scanned or digital) and generates structured discharge summary drafts for clinician review. Built for the Dscribe take-home assignment.
 
-## Setup
+**Core principle:** Conservative by design — any clinical data that cannot be reliably sourced from the documents is explicitly marked as `MISSING - clinician review required` rather than guessed or fabricated.
 
-```powershell
-uv sync
-```
+---
 
-Create a `.env` file for Groq-backed extraction and scanned-PDF OCR:
+## Live Demo
 
-```powershell
-GROQ_API_KEY=your_key_here
-```
+Upload a patient PDF at the live URL and get a structured discharge summary in minutes:
 
-Keep API keys out of git.
+👉 **[https://discharge-summary-agent-iqho.onrender.com](https://discharge-summary-agent-iqho.onrender.com)**
 
-## Run the Agent
+- Select OCR provider: **Groq** for scanned PDFs, **None** for digital PDFs (faster)
+- Small PDFs (1–5 pages): ~30–60 seconds
+- Large PDFs (10–70 pages): 5–15 minutes (OCR per page via Groq vision)
+- Results show structured draft + review flags directly in the browser
 
-Run on one patient PDF:
+> Note: The free Render instance may take ~30 seconds to wake up on first request.
 
-```powershell
-.venv\Scripts\python.exe main.py --input data\input\patient_2.pdf --patient-id patient_2 --ocr-provider groq
-```
+---
 
-Run on a folder containing multiple source-note PDFs for the same patient:
+## What It Does
 
-```powershell
-.venv\Scripts\python.exe main.py --input data\input\patient_2 --patient-id patient_2 --ocr-provider groq
-```
+- Extracts text from PDFs — embedded text first, Groq vision OCR as fallback
+- Uses an LLM (Groq Llama 3.1) to extract structured clinical facts with source citations
+- Reconciles admission vs. discharge medications and flags unexplained changes
+- Runs drug interaction screening and conflict detection
+- Validates all required fields and flags anything missing
+- Outputs a human-readable `draft.md`, structured `summary.json`, and full `trace.jsonl` audit trail
 
-Fast smoke test without LLM/OCR calls:
+---
 
-```powershell
-.venv\Scripts\python.exe main.py --input data\input\patient_2.pdf --patient-id smoke_no_ocr --no-llm --no-ocr
-```
+## Agent Loop (8-step bounded state machine)
 
-Useful OCR controls:
+1. **READ_PDFS** — Extract text (embedded → Groq OCR → Tesseract → error flag)
+2. **EXTRACT_FACTS** — LLM extracts all clinical fields with source quotes
+3. **RECONCILE_MEDICATIONS** — Compare admission vs. discharge meds, flag changes
+4. **CHECK_SAFETY** — Detect conflicts, run drug interaction screening
+5. **VALIDATE** — Verify all required fields, generate missing-field flags
+6. **WRITE_OUTPUTS** — Write `draft.md`, `summary.json`, `trace.jsonl`
 
-```powershell
-.venv\Scripts\python.exe main.py --input data\input\patient_2.pdf --patient-id patient_2 --ocr-provider groq --max-ocr-pages 5
-```
+Each step is logged with reasoning, inputs, result, and next decision.
 
-Outputs are written to:
-
-```text
-outputs/<patient-id>/draft.md
-outputs/<patient-id>/summary.json
-outputs/<patient-id>/trace.jsonl
-outputs/<patient-id>/ocr_cache/
-```
-
-`ocr_cache` avoids repeated Groq vision calls for pages that have already been extracted.
-
-## Optional API
-
-```powershell
-.venv\Scripts\uvicorn.exe api.app:app --reload
-```
-
-Then open:
-
-```text
-http://127.0.0.1:8000/docs
-```
-
-## Agent Loop
-
-The agent is a bounded from-scratch loop with a hard step cap:
-
-1. Decide the next action from state.
-2. Read PDFs with retry.
-3. Use embedded text when available; for scanned PDFs, use OCR fallback.
-4. Extract source-supported discharge-summary fields.
-5. Reconcile admission vs discharge medications.
-6. Call a mocked drug-interaction safety tool when discharge medications exist.
-7. Validate missing required fields and conflicts.
-8. Write `draft.md`, `summary.json`, and `trace.jsonl`.
-
-Each trace event includes reasoning, action/tool chosen, inputs, result, and next decision.
+---
 
 ## No-Fabrication Guardrail
 
-Required sections are represented as structured Pydantic models. Any field that cannot be sourced from the documents remains `MISSING - clinician review required`.
+All required fields are Pydantic models defaulting to `MISSING - clinician review required`. The LLM is required to return JSON with source quotes. If extraction fails, the agent falls back to conservative local extraction and adds a review flag — it never silently continues or invents data.
 
-The LLM prompt requires JSON output and source quotes. If Groq extraction fails or returns invalid content, the agent falls back to conservative local extraction and adds a review flag instead of silently continuing.
+---
 
-Image-only PDFs are handled safely. If embedded text and OCR both fail, the agent produces a mostly missing draft with explicit PDF-ingestion and required-field flags. Partial OCR failures are also flagged, so unread pages are not treated as evidence.
+## Outputs
 
-## Medication Reconciliation
+```
+outputs/<patient-id>/
+├── draft.md          # Human-readable discharge summary
+├── summary.json      # Structured clinical data
+├── trace.jsonl       # Full audit trail with reasoning
+└── ocr_cache/        # Cached OCR results (avoids repeated API calls)
+```
 
-Admission and discharge medications are normalized and compared. Added or stopped medications without a documented reason are flagged for reconciliation. The mocked interaction lookup demonstrates tool use and escalation; it should be replaced by a real medication-safety service in production.
+---
+
+## Local Setup
+
+**Requirements:** Python 3.11+
+
+```bash
+uv sync
+```
+
+Create a `.env` file:
+
+```
+GROQ_API_KEY=your_key_here
+```
+
+### Run the Agent
+
+Single PDF:
+```bash
+python main.py --input data/input/patient_2.pdf --patient-id patient_2 --ocr-provider groq
+```
+
+Folder of PDFs (same patient):
+```bash
+python main.py --input data/input/patient_2 --patient-id patient_2 --ocr-provider groq
+```
+
+Fast smoke test (no API calls):
+```bash
+python main.py --input data/input/patient_2.pdf --patient-id smoke_test --no-llm --no-ocr
+```
+
+Limit OCR pages for quick testing:
+```bash
+python main.py --input data/input/patient_2.pdf --patient-id test --ocr-provider groq --max-ocr-pages 5
+```
+
+### Run the API locally
+
+```bash
+uvicorn api.app:app --reload
+```
+
+Then open: `http://127.0.0.1:8000/docs`
+
+---
 
 ## Part 2: Simulated Learning from Doctor Edits
 
-Run the simulated reviewer and template-strategy learner:
+A multi-armed bandit that learns which discharge summary presentation strategy requires fewer clinician edits:
 
-```powershell
-.venv\Scripts\python.exe learning\simulated_learning.py --summaries outputs\patient_2\summary.json --iterations 12 --out outputs\part2
+```bash
+python learning/simulated_learning.py --summaries outputs/patient_2/summary.json --iterations 12 --out outputs/part2
 ```
 
-The simulated doctor applies a hidden editing policy: it prefers explicit "not documented in source notes" wording and a stronger draft-only safety disclaimer. The learner treats lower normalized edit distance as better, runs a small bandit over draft-rendering strategies, and writes:
+**Strategies tested:**
+- Baseline: `MISSING - clinician review required`
+- Explicit: `NOT DOCUMENTED in source notes — clinician must supply`
+- Safety First: `⛔ CRITICAL MISSING — do not finalise without this value`
 
-```text
-outputs/part2/part2_metrics.json
-outputs/part2/learning_curve.csv
+Outputs: `outputs/part2/part2_metrics.json` and `outputs/part2/learning_curve.csv`
+
+---
+
+## Tech Stack
+
+| Component | Technology |
+|-----------|------------|
+| LLM | Groq (Llama 3.1 8B) |
+| Vision OCR | Groq (Llama 4 Scout) |
+| Framework | FastAPI + Uvicorn |
+| Agent | Custom state machine (LangGraph-inspired) |
+| Data models | Pydantic v2 |
+| PDF parsing | PyMuPDF |
+| Hosting | Render (free tier) |
+
+---
+
+## Limitations & Future Work
+
+- Drug interaction screening is rule-based; production use requires a real pharmacological API (OpenFDA, DrugBank)
+- Limited to English-language PDFs
+- Part 2 reviewer is synthetic — proves the feedback loop works, not that clinical quality improved
+- No multi-patient timeline tracking
+
+With more time: document type classification, table-aware medication extraction, real clinician feedback loop, HIPAA-compliant audit logging, and integration with a verified clinical knowledge base.
+
+---
+
+## Project Structure
+
 ```
-
-This is intentionally lightweight but measurable. It demonstrates the feedback loop without using real clinician edits.
-
-## Limitations
-
-The local heuristic extractor is conservative and will miss information. Groq vision OCR is needed for the provided scanned patient PDF unless local Tesseract plus Python OCR libraries are installed. The drug-interaction tool is mocked. The Part 2 reviewer is synthetic, so its improvement metric proves only that the system can learn a consistent editing preference, not that clinical quality improved.
-
-To avoid gaming the learning loop, the renderer only changes phrasing/style around missing-data and safety language. It does not remove required sections, weaken missing-data flags, or invent clinical facts to reduce edit distance.
-
-With more time, I would add document type classification, table-aware medication extraction, stronger citation verification, multiple-patient evaluation, real OCR quality scoring, and integration with a verified clinical medication knowledge base.
-
-## Video Demo Checklist
-
-Record a 3-5 minute demo showing:
-
-1. Run the agent on `patient_2` with Groq OCR.
-2. Open `outputs/patient_2/draft.md`.
-3. Open `outputs/patient_2/trace.jsonl` and point to a decision where the agent flagged missing/unreadable/pending data instead of guessing.
-4. Run `learning\simulated_learning.py` and show `part2_metrics.json` if including Part 2.
-5. Mention that the output is a clinician-review draft and not a finalized discharge summary.
+discharge-summary-agent/
+├── main.py                      # CLI entry point
+├── agents/discharge_agent.py    # Core agent loop
+├── api/app.py                   # FastAPI REST endpoints
+├── api/ui.html                  # Web UI
+├── models/schemas.py            # Pydantic data models
+├── tools/pdf_reader.py          # PDF extraction + OCR
+├── tools/safety.py              # Conflict detection + drug interactions
+├── tools/trace.py               # Audit trail logger
+├── learning/simulated_learning.py  # Part 2 bandit learner
+└── outputs/                     # Generated summaries
+```
