@@ -41,12 +41,12 @@
 <div class="card">
   <h1>🏥 Discharge Summary Agent</h1>
   <p class="subtitle">Upload patient PDF(s) to generate a structured discharge summary draft.</p>
-
+ 
   <div class="field">
     <label for="patient_id">Patient ID</label>
     <input type="text" id="patient_id" placeholder="e.g. patient_001" />
   </div>
-
+ 
   <div class="field">
     <label>Upload PDF(s)</label>
     <div class="drop-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
@@ -56,7 +56,7 @@
     </div>
     <input type="file" id="file-input" multiple accept=".pdf" />
   </div>
-
+ 
   <div class="field">
     <label for="ocr_provider">OCR Provider</label>
     <select id="ocr_provider">
@@ -65,13 +65,20 @@
       <option value="none">None (digital PDFs only)</option>
     </select>
   </div>
-
+ 
   <button id="submit-btn" onclick="submitForm()">Generate Discharge Summary</button>
-
+ 
   <div class="status" id="status">
-    <span class="spinner"></span> Processing PDF... this may take 30–60 seconds.
+    <span class="spinner"></span>
+    <span id="status-text">Processing PDF... please wait.</span>
+    <div style="margin-top:8px;font-size:12px;color:#2b6cb0;line-height:1.6">
+      ⏱ <strong>Small PDFs (1–5 pages):</strong> ~30–60 seconds<br>
+      ⏱ <strong>Large PDFs (10–70 pages):</strong> 5–15 minutes (OCR per page)<br>
+      ⚠️ Processing uses Groq API — rate limits may slow things down.<br>
+      Please keep this tab open and do not refresh.
+    </div>
   </div>
-
+ 
   <div class="result-card" id="result-card">
     <h2>⚠️ Review Flags</h2>
     <div class="flags" id="flags"></div>
@@ -79,12 +86,12 @@
     <div class="draft-box" id="draft"></div>
   </div>
 </div>
-
+ 
 <script>
   const dropZone = document.getElementById('drop-zone');
   const fileInput = document.getElementById('file-input');
   let selectedFiles = [];
-
+ 
   fileInput.onchange = () => { selectedFiles = Array.from(fileInput.files); updateFileList(); };
   dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add('dragover'); };
   dropZone.ondragleave = () => dropZone.classList.remove('dragover');
@@ -93,42 +100,42 @@
     selectedFiles = Array.from(e.dataTransfer.files).filter(f => f.name.endsWith('.pdf'));
     updateFileList();
   };
-
+ 
   function updateFileList() {
     document.getElementById('file-list').innerHTML = selectedFiles.length
       ? '<br>' + selectedFiles.map(f => `✅ ${f.name}`).join('<br>')
       : '';
   }
-
+ 
   async function submitForm() {
     const patientId = document.getElementById('patient_id').value.trim();
     if (!patientId) { alert('Please enter a Patient ID'); return; }
     if (!selectedFiles.length) { alert('Please select at least one PDF'); return; }
-
+ 
     const btn = document.getElementById('submit-btn');
     const status = document.getElementById('status');
     const resultCard = document.getElementById('result-card');
-
+ 
     btn.disabled = true;
     status.className = 'status loading';
     status.innerHTML = '<span class="spinner"></span> Processing PDF... this may take 30–60 seconds.';
     resultCard.style.display = 'none';
-
+ 
     const form = new FormData();
     form.append('patient_id', patientId);
     form.append('ocr_provider', document.getElementById('ocr_provider').value);
     selectedFiles.forEach(f => form.append('files', f));
-
+ 
     try {
       const res = await fetch('/summaries', { method: 'POST', body: form });
       const data = await res.json();
-
+ 
       if (!res.ok) { throw new Error(data.detail || 'Server error'); }
-
+ 
       // Fetch the draft markdown
       const draftRes = await fetch(`/outputs/${patientId}/draft`);
       const draftData = await draftRes.json();
-
+ 
       // Render flags
       const flagsEl = document.getElementById('flags');
       if (data.flags && data.flags.length) {
@@ -138,11 +145,11 @@
       } else {
         flagsEl.innerHTML = '<p style="color:#48bb78;font-size:13px">✅ No review flags found.</p>';
       }
-
+ 
       document.getElementById('draft').textContent = draftData.draft || 'No draft generated.';
       resultCard.style.display = 'block';
       status.style.display = 'none';
-
+ 
     } catch (err) {
       status.className = 'status error';
       status.textContent = '❌ Error: ' + err.message;
