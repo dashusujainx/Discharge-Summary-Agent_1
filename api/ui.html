@@ -132,9 +132,7 @@
  
       if (!res.ok) { throw new Error(data.detail || 'Server error'); }
  
-      // Fetch the draft markdown
-      const draftRes = await fetch(`/outputs/${patientId}/draft`);
-      const draftData = await draftRes.json();
+      const draftData = { draft: data.draft };
  
       // Render flags
       const flagsEl = document.getElementById('flags');

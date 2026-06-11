@@ -1,4 +1,6 @@
 from __future__ import annotations
+from importlib.metadata import files
+from importlib.resources import files
 import shutil, tempfile
 from pathlib import Path
 
@@ -57,9 +59,13 @@ async def create_summary(
         )
         state = agent.run()
 
+    draft_path = output_dir / "draft.md"
+    draft_content = draft_path.read_text(encoding="utf-8") if draft_path.exists() else "Draft not generated."
+
     return JSONResponse({
         "patient_id": patient_id,
-        "draft_path": str(output_dir / "draft.md"),
+        "draft": draft_content,
+        "draft_path": str(draft_path),
         "summary_path": str(output_dir / "summary.json"),
         "trace_path": str(output_dir / "trace.jsonl"),
         "flags": [
